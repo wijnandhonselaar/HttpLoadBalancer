@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="HttpLoadBalancer.Service.ConnectionService">
-    <Position X="6.75" Y="6.25" Width="1.75" />
+    <Position X="8.75" Y="6.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAABAAAAAAAABAAAIAAAAAAAACASAAABAAAAAAAAA=</HashCode>
       <FileName>Service\ConnectionService.cs</FileName>
@@ -15,7 +15,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Service.HealthService">
-    <Position X="6.75" Y="9.5" Width="1.5" />
+    <Position X="8.75" Y="9.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Service\HealthService.cs</FileName>
@@ -31,7 +31,7 @@
   <Class Name="HttpLoadBalancer.Model.Server">
     <Position X="2.5" Y="8.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAQ=</HashCode>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAQ=</HashCode>
       <FileName>Model\Server.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -43,18 +43,39 @@
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Service.MethodService">
-    <Position X="4.5" Y="6.25" Width="1.5" />
+    <Position X="5.75" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAEA=</HashCode>
       <FileName>Service\MethodService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Model.Method">
-    <Position X="4.5" Y="8.5" Width="1.5" />
+    <Position X="5.75" Y="8.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAABAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\Method.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="HttpLoadBalancer.Model.Methods.RoundRobinMethod" Collapsed="true">
+    <Position X="4.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Methods\RoundRobinMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HttpLoadBalancer.Model.Methods.RandomMethod" Collapsed="true">
+    <Position X="6.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Methods\RandomMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="HttpLoadBalancer.Status">
+    <Position X="2.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Status.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

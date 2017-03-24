@@ -46,7 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Methods\RandomMethod.cs" />
+    <Compile Include="Model\Methods\RoundRobinMethod.cs" />
     <Compile Include="Service\ConnectionService.cs" />
+    <Compile Include="Status.cs" />
     <Compile Include="View\Gui.cs">
       <SubType>Form</SubType>
     </Compile>

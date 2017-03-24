@@ -4,7 +4,7 @@ namespace HttpLoadBalancer.Model
 {
     public class Server
     {
-        public Server(TcpClient client, string address)
+        public Server(TcpClient client, string address, Status status)
         {
             throw new System.NotImplementedException();
         }
@@ -22,6 +22,18 @@ namespace HttpLoadBalancer.Model
         }
 
         public string Address
+        {
+            get
+            {
+                throw new System.NotImplementedException();
+            }
+
+            set
+            {
+            }
+        }
+
+        public Status Status
         {
             get
             {
