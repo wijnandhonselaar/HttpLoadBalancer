@@ -5,45 +5,20 @@ namespace HttpLoadBalancer.Models
 {
     public class Server
     {
-        public Server(TcpClient client, string address, Status status)
+        public Server(TcpClient client, string name, string address, Status status)
         {
-            throw new System.NotImplementedException();
+            Client = client;
+            Name = name;
+            Address = address;
+            Status = status;
         }
 
-        public TcpClient Client
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
+        public TcpClient Client { get; set; }
 
-            set
-            {
-            }
-        }
+        public string Name { get; set; }
 
-        public string Address
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
+        public string Address { get; set; }
 
-            set
-            {
-            }
-        }
-
-        public Status Status
-        {
-            get
-            {
-                throw new System.NotImplementedException();
-            }
-
-            set
-            {
-            }
-        }
-    }
+        public Status Status { get; set; }
+}
 }

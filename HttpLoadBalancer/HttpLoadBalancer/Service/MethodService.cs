@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HttpLoadBalancer.Model;
-using HttpLoadBalancer.Model.Methods;
 using HttpLoadBalancer.Models;
+using HttpLoadBalancer.Models.Methods;
 
 namespace HttpLoadBalancer.Service
 {
@@ -13,7 +13,7 @@ namespace HttpLoadBalancer.Service
         public static List<Method> Methods = new List<Method>
         {
             new RandomMethod(),
-            new RoundRobinMethod("RoundRobin")
+            new RoundRobinMethod()
         };
 
         public static bool SetMethod(string methodName)

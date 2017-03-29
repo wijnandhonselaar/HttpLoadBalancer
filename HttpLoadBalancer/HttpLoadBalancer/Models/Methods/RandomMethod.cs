@@ -1,7 +1,8 @@
-﻿using System.Net.Sockets;
-using HttpLoadBalancer.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Sockets;
 
-namespace HttpLoadBalancer.Model.Methods
+namespace HttpLoadBalancer.Models.Methods
 {
     public class RandomMethod : Method
     {
@@ -10,9 +11,15 @@ namespace HttpLoadBalancer.Model.Methods
             Name = "Random";
         }
 
-        public override HttpMessage ProcessRequest(NetworkStream message, HttpMessage httpMessage)
+        /// <summary>
+        /// Gets a random server
+        /// </summary>
+        /// <param name="servers"></param>
+        /// <returns></returns>
+        public override Server GetServer(List<Server> servers)
         {
-            return new HttpMessage("");
+            var index = new Random().Next(0, servers.Count);
+            return servers[index];
         }
     }
 }

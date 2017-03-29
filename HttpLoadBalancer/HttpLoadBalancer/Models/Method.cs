@@ -1,15 +1,12 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace HttpLoadBalancer.Models
 {
     public abstract class Method
     {
-        //protected Method(string name)
-        //{
-        //    Name = name;
-        //}
         public string Name { get; set; }
-        public virtual HttpMessage ProcessRequest(NetworkStream message, HttpMessage httpMessage)
+        public virtual Server GetServer(List<Server> servers)
         {
             throw new System.NotImplementedException();
         }

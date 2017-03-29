@@ -17,5 +17,15 @@ namespace HttpLoadBalancer.View
         {
             _running = _running ? controller.StopServer() : controller.StartServer();
         }
+
+        private void btnAddServer_Click(object sender, System.EventArgs e)
+        {
+            
+        }
+
+        private void btnRemoveServer_Click(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }
