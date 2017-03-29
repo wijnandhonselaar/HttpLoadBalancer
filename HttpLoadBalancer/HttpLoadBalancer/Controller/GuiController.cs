@@ -1,27 +1,48 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using HttpLoadBalancer.Model;
+using HttpLoadBalancer.Models;
+using HttpLoadBalancer.Service;
 using HttpLoadBalancer.View;
 
 namespace HttpLoadBalancer.Controller
 {
     public class GuiController
     {
-
-        public GuiController(Gui Gui)
+        private readonly ConcurrentBag<Method> _methods;
+        private readonly Gui _gui;
+        /// <summary>
+        /// Constructor GuiController
+        /// </summary>
+        /// <param name="gui"></param>
+        public GuiController(Gui gui)
         {
-            throw new System.NotImplementedException();
+            _gui = gui;
+            _methods = new ConcurrentBag<Method>(MethodService.Methods);
+
+            // initiate setting up all the data in the interface
+            InitGuiData();
         }
 
-        private ConcurrentBag<Method> _methods;
-
-        public void StartServer()
+        /// <summary>
+        /// 
+        /// </summary>
+        private void InitGuiData()
         {
-            throw new System.NotImplementedException();
+            var methods = _methods.Select(x => x.Name).ToList();
+            _gui.BalanceMethod.Items.AddRange(methods.Cast<object>().ToArray());
+            _gui.BalanceMethod.SelectedIndex = 0;
         }
 
-        public void StopServer()
+        public bool StartServer()
         {
-            throw new System.NotImplementedException();
+            return true;
+        }
+
+        public bool StopServer()
+        {
+            return false;
         }
 
         public void SelectMethod(string name)

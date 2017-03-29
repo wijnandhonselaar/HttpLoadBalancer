@@ -5,11 +5,17 @@ namespace HttpLoadBalancer.View
 {
     public partial class Gui : Form
     {
-        private GuiController controller;
+        private readonly GuiController controller;
+        private bool _running = false;
         public Gui()
         {
-            controller = new GuiController(this);
             InitializeComponent();
+            controller = new GuiController(this);
+        }
+
+        private void btnToggleLoadBalancer_Click(object sender, System.EventArgs e)
+        {
+            _running = _running ? controller.StopServer() : controller.StartServer();
         }
     }
 }

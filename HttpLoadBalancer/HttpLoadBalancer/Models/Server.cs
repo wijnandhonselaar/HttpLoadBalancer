@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
+using HttpLoadBalancer.Model;
 
-namespace HttpLoadBalancer.Model
+namespace HttpLoadBalancer.Models
 {
     public class Server
     {

@@ -46,10 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Methods\RandomMethod.cs" />
-    <Compile Include="Model\Methods\RoundRobinMethod.cs" />
+    <Compile Include="Interfaces\IHealthMonitor.cs" />
+    <Compile Include="Interfaces\IPersistenceMethod.cs" />
+    <Compile Include="Models\HealthMonitors\ResponsetimeMonitor.cs" />
+    <Compile Include="Models\PersistenceMethods\CookiePersistenceMethod.cs" />
+    <Compile Include="Models\Methods\RandomMethod.cs" />
+    <Compile Include="Models\Methods\RoundRobinMethod.cs" />
+    <Compile Include="Models\PersistenceMethods\SessionPersistenceMethod.cs" />
     <Compile Include="Service\ConnectionService.cs" />
-    <Compile Include="Status.cs" />
+    <Compile Include="Models\Status.cs" />
     <Compile Include="View\Gui.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -58,12 +63,12 @@
     </Compile>
     <Compile Include="Controller\GuiController.cs" />
     <Compile Include="Service\HealthService.cs" />
-    <Compile Include="Model\HttpMessage.cs" />
-    <Compile Include="Model\Method.cs" />
+    <Compile Include="Models\HttpMessage.cs" />
+    <Compile Include="Models\Method.cs" />
     <Compile Include="Service\MethodService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\Server.cs" />
+    <Compile Include="Models\Server.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -73,6 +78,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\Gui.resx">
+      <DependentUpon>Gui.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="ClassDiagram.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

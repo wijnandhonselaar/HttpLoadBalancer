@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using HttpLoadBalancer.Model;
+using HttpLoadBalancer.Models;
 
 namespace HttpLoadBalancer.Service
 {

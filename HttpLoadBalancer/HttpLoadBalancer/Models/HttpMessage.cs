@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HttpLoadBalancer.Model
+namespace HttpLoadBalancer.Models
 {
     public class HttpMessage
     {

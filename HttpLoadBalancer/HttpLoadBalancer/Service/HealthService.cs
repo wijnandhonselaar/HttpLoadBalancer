@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HttpLoadBalancer.Model;
+using HttpLoadBalancer.Models;
 
 namespace HttpLoadBalancer.Service
 {
@@ -7,7 +9,7 @@ namespace HttpLoadBalancer.Service
     {
         public HealthService()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -16,7 +18,7 @@ namespace HttpLoadBalancer.Service
         /// <returns></returns>
         public List<Server> CheckStatus()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

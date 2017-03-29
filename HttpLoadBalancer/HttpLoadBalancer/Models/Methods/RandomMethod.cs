@@ -1,11 +1,13 @@
 ﻿using System.Net.Sockets;
+using HttpLoadBalancer.Models;
 
 namespace HttpLoadBalancer.Model.Methods
 {
-    public class RoundRobinMethod : Method
+    public class RandomMethod : Method
     {
-        public RoundRobinMethod(string name) : base(name)
+        public RandomMethod()
         {
+            Name = "Random";
         }
 
         public override HttpMessage ProcessRequest(NetworkStream message, HttpMessage httpMessage)
@@ -13,6 +15,4 @@ namespace HttpLoadBalancer.Model.Methods
             return new HttpMessage("");
         }
     }
-
-    
 }

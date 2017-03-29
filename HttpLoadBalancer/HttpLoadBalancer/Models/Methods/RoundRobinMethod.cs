@@ -1,10 +1,11 @@
 ﻿using System.Net.Sockets;
+using HttpLoadBalancer.Models;
 
 namespace HttpLoadBalancer.Model.Methods
 {
-    public class RandomMethod : Method
+    public class RoundRobinMethod : Method
     {
-        public RandomMethod(string name) : base(name)
+        public RoundRobinMethod(string name) : base(name)
         {
         }
 
@@ -13,4 +14,6 @@ namespace HttpLoadBalancer.Model.Methods
             return new HttpMessage("");
         }
     }
+
+    
 }
