@@ -161,7 +161,7 @@
             this.numPort.Size = new System.Drawing.Size(120, 20);
             this.numPort.TabIndex = 2;
             this.numPort.Value = new decimal(new int[] {
-            8080,
+            9000,
             0,
             0,
             0});
@@ -178,7 +178,7 @@
             this.numServerPort.Size = new System.Drawing.Size(120, 20);
             this.numServerPort.TabIndex = 15;
             this.numServerPort.Value = new decimal(new int[] {
-            8080,
+            80,
             0,
             0,
             0});

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using HttpLoadBalancer.Interfaces;
@@ -11,7 +12,8 @@ namespace HttpLoadBalancer.Models.HealthMonitors
     {
         public bool IsHealthy(Server server)
         {
-            throw new NotImplementedException();
+            var tcpClient = new TcpClient(server.Address, server.Port);
+            return true;
         }
     }
 }
