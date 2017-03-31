@@ -20,11 +20,13 @@ namespace HttpLoadBalancer.Service
 
         public async Task HandleRequest(TcpClient client)
         {
-            var stream = client.GetStream();
-            var request = await ReceiveRequest(stream);
-            var responseStream = SendeRequest(request);
-            var response = await GetResponse(responseStream);
-            SendResponse(stream, response);
+            using (var stream = client.GetStream())
+            {
+                var request = await ReceiveRequest(stream);
+                var responseStream = SendeRequest(request);
+                var response = await GetResponse(responseStream);
+                SendResponse(stream, response);
+            }
         }
 
         private async Task<HttpMessage> ReceiveRequest(NetworkStream stream)
@@ -32,6 +34,7 @@ namespace HttpLoadBalancer.Service
             var buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);
             var context = Encoding.UTF8.GetString(buffer);
+            Console.WriteLine(context);
             var request = new HttpMessage(context);
             return request;
         }
@@ -39,11 +42,13 @@ namespace HttpLoadBalancer.Service
         private NetworkStream SendeRequest(HttpMessage request)
         {
             // httpMessage for session persistence (cookie)
+            var requestArray = HttpMapper.ToRequest(request);
+            Console.WriteLine("My Request");
+            Console.WriteLine(Encoding.ASCII.GetString(requestArray, 0, requestArray.Length));
             var server = MethodService.CurrentMethod.GetServer(Servers);
             var serverClient = new TcpClient();
             serverClient.Connect(server.Address, server.Port);
             var serverStream = serverClient.GetStream();
-            var requestArray = HttpMapper.ToRequest(request);
             serverStream.Write(requestArray, 0, requestArray.Length);
             return serverStream;
         }
