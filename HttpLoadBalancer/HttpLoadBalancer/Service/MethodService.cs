@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Model;
 using HttpLoadBalancer.Models;
 using HttpLoadBalancer.Models.Methods;
@@ -9,6 +10,7 @@ namespace HttpLoadBalancer.Service
     public static class MethodService
     {
         public static Method CurrentMethod { get; private set; }
+        public static IHealthMonitor Monitor { get; set; }
 
         public static List<Method> Methods = new List<Method>
         {

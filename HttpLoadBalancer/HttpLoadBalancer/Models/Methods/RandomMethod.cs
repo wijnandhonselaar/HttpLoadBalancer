@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using HttpLoadBalancer.Service;
 
 namespace HttpLoadBalancer.Models.Methods
 {
@@ -20,6 +21,10 @@ namespace HttpLoadBalancer.Models.Methods
         public override Server GetServer(List<Server> servers)
         {
             var index = new Random().Next(0, servers.Count);
+            while (!MethodService.Monitor.IsHealthy(servers[index].Address))
+            {
+                index = new Random().Next(0, servers.Count);
+            }
             return servers[index];
         }
     }

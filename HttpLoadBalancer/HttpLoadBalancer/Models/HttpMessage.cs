@@ -9,17 +9,23 @@ namespace HttpLoadBalancer.Models
 {
     public class HttpMessage
     {
-        public HttpMessage(string httpMessage)
+        public HttpMessage(byte[] httpMessage, bool isReponse = false)
         {
-            Properties = HttpMapper.ToHead(httpMessage);
+            Original = httpMessage;
+            var context = Encoding.UTF8.GetString(httpMessage);
+            context = context.Replace("\0", "");
+            if (!isReponse && context.Length > 0)
+                Properties = HttpMapper.ToRequestHead(context);
         }
+
+        public byte[] Original { get; set; }
 
         public Dictionary<string, string> Properties { get; set; }
     }
 
     public static class HttpMapper
     {
-        public static Dictionary<string, string> ToHead(string context)
+        public static Dictionary<string, string> ToRequestHead(string context)
         {
             var request = new Dictionary<string, string>();
             var lines = RequestToList(context);
@@ -55,6 +61,43 @@ namespace HttpLoadBalancer.Models
             }
             return request;
         }
+        public static Dictionary<string, string> ToResponseHead(string context)
+        {
+            var response = new Dictionary<string, string>();
+            var lines = RequestToList(context);
+            for (var i = 0; i < lines.Count; i++)
+            {
+                // First line is the status line
+                // erveything until the empty line is a header
+                // the forloop after the empty line is in case the content is split in more than one line because of the split on Environment.NewLine
+                if (i > 0)
+                {
+                    if (lines[i].Contains(':'))
+                    {
+                        response.Add(lines[i].Split(':')[0], lines[i].Split(':')[1].Trim());
+                    }
+                    else if (lines[i] == "")
+                    {
+                        var body = "";
+                        for (var y = i + 1; y < lines.Count; y++)
+                        {
+                            body += lines[y];
+                        }
+                        response.Add("Body", body.Trim().Replace("\0", ""));
+                        i = lines.Count;
+                    }
+                }
+                else
+                {
+                    var statusLine = lines[i].Split(' ');
+                    response.Add("Method", statusLine[0]);
+                    response.Add("Url", statusLine[1]);
+                    response.Add("HttpVersion", statusLine[2]);
+                }
+            }
+            return response;
+        }
+
         public static List<string> RequestToList(string text)
         {
             return text.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToList();
@@ -63,70 +106,34 @@ namespace HttpLoadBalancer.Models
         public static byte[] ToRequest(HttpMessage message)
         {
             var request = "";
-            var statusLine = new List<string> {"Method", "Url", "HttpVersion"};
+            var statusLine = new List<string> { "Method", "Url", "HttpVersion" };
             foreach (var prop in message.Properties)
             {
                 if (statusLine.Contains(prop.Key))
                 {
-                    request += $"{prop.Value} ";
+
                     if (prop.Key == "HttpVersion")
-                        request += "\r\n";
+                        request += $"{prop.Value}\r\n";
+                    else
+                        request += $"{prop.Value} ";
+                }
+                else if (prop.Key == "Body")
+                {
+                    request += "\r\n";
+                    request += prop.Value.Trim().Replace("\0", "");
                 }
                 else
                 {
-                    request += $"{prop.Key}: {prop.Value}\r\n";
+                    request += $"{prop.Key}: {prop.Value.Trim()}\r\n";
                 }
             }
             return Encoding.ASCII.GetBytes(request);
         }
 
-        public static string GetRequestHead(HttpMessage message)
+        public static void SetUrl(HttpMessage request, Server server)
         {
-            var head = "";
-            // status line
-            //head += "HTTP/" + message.Properties["HttpVersion"] + " " + httpRes.StatusCode.GetHashCode() + " " +
-            //        httpRes.StatusDescription + "\r\n";
-            //// Date
-            //head += ToHeaderProperty("Date", httpRes.Headers["Date"]);
-            //// Server
-            //head += ToHeaderProperty("Server", httpRes.Server);
-            //// Content-Type
-            //head += ToHeaderProperty("Content-Type", httpRes.ContentType);
-            //// Content-Length
-            //head += ToHeaderProperty("Content-Length", httpRes.ContentLength.ToString());
-
-            return head;
+            request.Properties["Url"] = $"http://{server.Address}/";
+            request.Properties["Host"] = server.Address;
         }
-
-        public static byte[] ToResponse(HttpMessage message)
-        {
-            // Creating a list because this is easier to manupulate in comparrison to the array it is.
-            var head = GetReponseHead(message);
-            var response = new List<byte>(Encoding.UTF8.GetBytes(head));
-            response.AddRange(Encoding.UTF8.GetBytes("\r\n"));
-            string body;
-            message.Properties.TryGetValue("Body", out body);
-            response.AddRange(Encoding.ASCII.GetBytes(body));
-            return response.ToArray();
-        }
-
-        public static string GetReponseHead(HttpMessage message)
-        {
-            var head = "";
-            // status line
-            //head += "HTTP/" + message.Properties["HttpVersion"] + " " + httpRes.StatusCode.GetHashCode() + " " +
-            //        httpRes.StatusDescription + "\r\n";
-            // Date
-            //head += ToHeaderProperty("Date", httpRes.Headers["Date"]);
-            // Server
-            //head += ToHeaderProperty("Server", httpRes.Server);
-            // Content-Type
-            //head += ToHeaderProperty("Content-Type", httpRes.ContentType);
-            // Content-Length
-            //head += ToHeaderProperty("Content-Length", httpRes.ContentLength.ToString());
-
-            return head;
-        }
-
     }
 }

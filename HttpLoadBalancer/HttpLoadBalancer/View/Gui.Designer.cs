@@ -37,13 +37,14 @@
             this.lblMethodSummary = new System.Windows.Forms.Label();
             this.btnRemoveServer = new System.Windows.Forms.Button();
             this.txtServerAdrress = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.lblSelectedServer = new System.Windows.Forms.Label();
             this.numPort = new System.Windows.Forms.NumericUpDown();
             this.numServerPort = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnAddServer = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.HealthMonitors = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numServerPort)).BeginInit();
             this.SuspendLayout();
@@ -52,14 +53,14 @@
             // 
             this.BalanceMethod.AllowDrop = true;
             this.BalanceMethod.FormattingEnabled = true;
-            this.BalanceMethod.Location = new System.Drawing.Point(322, 96);
+            this.BalanceMethod.Location = new System.Drawing.Point(498, 96);
             this.BalanceMethod.Name = "BalanceMethod";
             this.BalanceMethod.Size = new System.Drawing.Size(121, 21);
             this.BalanceMethod.TabIndex = 0;
             // 
             // btnToggleLoadBalancer
             // 
-            this.btnToggleLoadBalancer.Location = new System.Drawing.Point(322, 67);
+            this.btnToggleLoadBalancer.Location = new System.Drawing.Point(498, 67);
             this.btnToggleLoadBalancer.Name = "btnToggleLoadBalancer";
             this.btnToggleLoadBalancer.Size = new System.Drawing.Size(75, 23);
             this.btnToggleLoadBalancer.TabIndex = 1;
@@ -72,7 +73,7 @@
             this.lstServers.FormattingEnabled = true;
             this.lstServers.Location = new System.Drawing.Point(12, 41);
             this.lstServers.Name = "lstServers";
-            this.lstServers.Size = new System.Drawing.Size(230, 264);
+            this.lstServers.Size = new System.Drawing.Size(398, 264);
             this.lstServers.TabIndex = 3;
             // 
             // label1
@@ -88,7 +89,7 @@
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(287, 43);
+            this.lblPort.Location = new System.Drawing.Point(463, 43);
             this.lblPort.Name = "lblPort";
             this.lblPort.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPort.Size = new System.Drawing.Size(29, 13);
@@ -99,7 +100,7 @@
             // lblMethod
             // 
             this.lblMethod.AutoSize = true;
-            this.lblMethod.Location = new System.Drawing.Point(270, 99);
+            this.lblMethod.Location = new System.Drawing.Point(446, 99);
             this.lblMethod.Name = "lblMethod";
             this.lblMethod.Size = new System.Drawing.Size(46, 13);
             this.lblMethod.TabIndex = 7;
@@ -109,7 +110,7 @@
             // lblMethodSummary
             // 
             this.lblMethodSummary.AutoSize = true;
-            this.lblMethodSummary.Location = new System.Drawing.Point(273, 214);
+            this.lblMethodSummary.Location = new System.Drawing.Point(449, 214);
             this.lblMethodSummary.MaximumSize = new System.Drawing.Size(200, 200);
             this.lblMethodSummary.Name = "lblMethodSummary";
             this.lblMethodSummary.Size = new System.Drawing.Size(0, 13);
@@ -117,7 +118,7 @@
             // 
             // btnRemoveServer
             // 
-            this.btnRemoveServer.Location = new System.Drawing.Point(167, 337);
+            this.btnRemoveServer.Location = new System.Drawing.Point(335, 311);
             this.btnRemoveServer.Name = "btnRemoveServer";
             this.btnRemoveServer.Size = new System.Drawing.Size(75, 23);
             this.btnRemoveServer.TabIndex = 9;
@@ -127,19 +128,10 @@
             // 
             // txtServerAdrress
             // 
-            this.txtServerAdrress.Location = new System.Drawing.Point(322, 154);
+            this.txtServerAdrress.Location = new System.Drawing.Point(498, 154);
             this.txtServerAdrress.Name = "txtServerAdrress";
             this.txtServerAdrress.Size = new System.Drawing.Size(120, 20);
             this.txtServerAdrress.TabIndex = 10;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 308);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 13);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Selected Server:";
             // 
             // lblSelectedServer
             // 
@@ -151,7 +143,7 @@
             // 
             // numPort
             // 
-            this.numPort.Location = new System.Drawing.Point(322, 41);
+            this.numPort.Location = new System.Drawing.Point(498, 41);
             this.numPort.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -168,7 +160,7 @@
             // 
             // numServerPort
             // 
-            this.numServerPort.Location = new System.Drawing.Point(322, 180);
+            this.numServerPort.Location = new System.Drawing.Point(498, 180);
             this.numServerPort.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -186,7 +178,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(268, 157);
+            this.label3.Location = new System.Drawing.Point(444, 157);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(48, 13);
             this.label3.TabIndex = 16;
@@ -196,7 +188,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(287, 182);
+            this.label2.Location = new System.Drawing.Point(463, 182);
             this.label2.Name = "label2";
             this.label2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.label2.Size = new System.Drawing.Size(29, 13);
@@ -206,7 +198,7 @@
             // 
             // btnAddServer
             // 
-            this.btnAddServer.Location = new System.Drawing.Point(322, 209);
+            this.btnAddServer.Location = new System.Drawing.Point(498, 209);
             this.btnAddServer.Name = "btnAddServer";
             this.btnAddServer.Size = new System.Drawing.Size(75, 23);
             this.btnAddServer.TabIndex = 18;
@@ -214,17 +206,38 @@
             this.btnAddServer.UseVisualStyleBackColor = true;
             this.btnAddServer.Click += new System.EventHandler(this.btnAddServer_Click);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(416, 126);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(81, 13);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "HealthMonitors:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // HealthMonitors
+            // 
+            this.HealthMonitors.AllowDrop = true;
+            this.HealthMonitors.FormattingEnabled = true;
+            this.HealthMonitors.Location = new System.Drawing.Point(498, 123);
+            this.HealthMonitors.Name = "HealthMonitors";
+            this.HealthMonitors.Size = new System.Drawing.Size(121, 21);
+            this.HealthMonitors.TabIndex = 19;
+            this.HealthMonitors.SelectedIndexChanged += new System.EventHandler(this.HealthMonitor_SelectedIndexChanged);
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(454, 369);
+            this.ClientSize = new System.Drawing.Size(630, 340);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.HealthMonitors);
             this.Controls.Add(this.btnAddServer);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.numServerPort);
             this.Controls.Add(this.lblSelectedServer);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.txtServerAdrress);
             this.Controls.Add(this.btnRemoveServer);
             this.Controls.Add(this.lblMethodSummary);
@@ -254,7 +267,6 @@
         public System.Windows.Forms.ListBox lstServers;
         public System.Windows.Forms.Label lblMethodSummary;
         private System.Windows.Forms.Button btnRemoveServer;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label lblSelectedServer;
         public System.Windows.Forms.NumericUpDown numPort;
         public System.Windows.Forms.NumericUpDown numServerPort;
@@ -262,6 +274,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnAddServer;
         public System.Windows.Forms.TextBox txtServerAdrress;
+        private System.Windows.Forms.Label label4;
+        public System.Windows.Forms.ComboBox HealthMonitors;
     }
 }
 

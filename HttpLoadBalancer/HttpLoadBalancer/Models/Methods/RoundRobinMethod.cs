@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using HttpLoadBalancer.Service;
 
 namespace HttpLoadBalancer.Models.Methods
 {
@@ -11,7 +12,7 @@ namespace HttpLoadBalancer.Models.Methods
             Name = "Round Robin";
         }
 
-        private int _index = 0;
+        private int _index;
 
         /// <summary>
         /// Get the next server in line
@@ -20,8 +21,11 @@ namespace HttpLoadBalancer.Models.Methods
         /// <returns></returns>
         public override Server GetServer(List<Server> servers)
         {
+            while (!MethodService.Monitor.IsHealthy(servers[_index].Address))
+            {
+                _index++;
+            }
             var server = servers[_index];
-            _index++;
             if (_index == servers.Count) _index = 0;
             return server;
         }

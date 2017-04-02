@@ -5,52 +5,87 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Models;
+using HttpLoadBalancer.Models.HealthMonitors;
 
 namespace HttpLoadBalancer.Service
 {
     public class ConnectionService
     {
-        public event EventHandler ServerOffline;
-        public event EventHandler ServerOnline;
         const int BufferSize = 2048;
 
         public List<Server> Servers = new List<Server>();
+        public Server SelectedServer;
 
         public async Task HandleRequest(TcpClient client)
         {
-            var stream = client.GetStream();
-            var request = await ReceiveRequest(stream);
-            var responseStream = SendeRequest(request);
-            var response = await GetResponse(responseStream);
-            SendResponse(stream, response);
+            using (var stream = client.GetStream())
+            {
+                var request = await ReceiveRequest(stream);
+                if (request != null && IsValidRequest(request))
+                {
+                    var responseStream = await SendeRequest(request);
+                    var i = 0;
+
+                    while (!responseStream.DataAvailable)
+                    {
+                        i++;
+                        if (i > 5) break;
+                        Thread.Sleep(50);
+                    }
+                    var response = await GetResponse(responseStream);
+                    SendResponse(stream, response);
+                }
+            }
+        }
+
+        public List<Server> GetDefaultServers()
+        {
+            return new List<Server>
+            {
+                new Server("server4.tezzt.nl", 8081),
+                new Server("server4.tezzt.nl", 8082),
+                new Server("server4.tezzt.nl", 8083),
+                new Server("server4.tezzt.nl", 8084)
+            };
+        }
+    
+        private bool IsValidRequest(HttpMessage request)
+        {
+            var message = Encoding.ASCII.GetString(request.Original).Replace("\0", "");
+            return message.Length > 0;
         }
 
         private async Task<HttpMessage> ReceiveRequest(NetworkStream stream)
         {
+            if (!stream.DataAvailable) return null;
             var buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);
-            var context = Encoding.UTF8.GetString(buffer);
-            var request = new HttpMessage(context);
+            var request = new HttpMessage(buffer);
             return request;
         }
 
-        private NetworkStream SendeRequest(HttpMessage request)
+        private async Task<NetworkStream> SendeRequest(HttpMessage request)
         {
             // httpMessage for session persistence (cookie)
-            var server = MethodService.CurrentMethod.GetServer(Servers);
+            SelectedServer = MethodService.CurrentMethod.GetServer(Servers);
+            HttpMapper.SetUrl(request, SelectedServer);
             var serverClient = new TcpClient();
-            serverClient.Connect(server.Address, server.Port);
+            serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
             var serverStream = serverClient.GetStream();
             var requestArray = HttpMapper.ToRequest(request);
-            serverStream.Write(requestArray, 0, requestArray.Length);
+            await serverStream.WriteAsync(requestArray, 0, requestArray.Length, CancellationToken.None);
             return serverStream;
         }
 
         private async Task<HttpMessage> GetResponse (NetworkStream stream)
         {
             var buffer = new byte[BufferSize];
+            HttpMessage response = null;
+            if (!stream.DataAvailable) return response;
             try
             {
                 await stream.ReadAsync(buffer, 0, BufferSize);
@@ -58,17 +93,15 @@ namespace HttpLoadBalancer.Service
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
+                throw(e);
             }
-            var context = Encoding.UTF8.GetString(buffer);
-            var response = new HttpMessage(context);
+            response = new HttpMessage(buffer, true);
             return response;
         }
 
         private void SendResponse(NetworkStream stream, HttpMessage message)
         {
-            var response = HttpMapper.ToResponse(message);
-            stream.Write(response, 0 , response.Length);
+            stream.Write(message.Original, 0 , message.Original.Length);
         }
 
         public Server AddServer(string address, int port)
@@ -78,9 +111,6 @@ namespace HttpLoadBalancer.Service
             return server;
         }
 
-        public bool RemoveServer(Server server)
-        {
-            return Servers.Remove(server);
-        }
+        public bool RemoveServer(Server server) => Servers.Remove(server);
     }
 }
