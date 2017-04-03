@@ -45,6 +45,10 @@
             this.btnAddServer = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.HealthMonitors = new System.Windows.Forms.ComboBox();
+            this.Address = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lstServersView = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.numPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numServerPort)).BeginInit();
             this.SuspendLayout();
@@ -226,11 +230,39 @@
             this.HealthMonitors.TabIndex = 19;
             this.HealthMonitors.SelectedIndexChanged += new System.EventHandler(this.HealthMonitor_SelectedIndexChanged);
             // 
+            // Address
+            // 
+            this.Address.Text = "Address";
+            // 
+            // Port
+            // 
+            this.Port.Text = "Port";
+            // 
+            // Status
+            // 
+            this.Status.Text = "Status";
+            // 
+            // lstServersView
+            // 
+            this.lstServersView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Address,
+            this.Port,
+            this.Status});
+            this.lstServersView.GridLines = true;
+            this.lstServersView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstServersView.Location = new System.Drawing.Point(12, 338);
+            this.lstServersView.MultiSelect = false;
+            this.lstServersView.Name = "lstServersView";
+            this.lstServersView.Size = new System.Drawing.Size(398, 234);
+            this.lstServersView.TabIndex = 21;
+            this.lstServersView.UseCompatibleStateImageBehavior = false;
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 340);
+            this.ClientSize = new System.Drawing.Size(630, 764);
+            this.Controls.Add(this.lstServersView);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.HealthMonitors);
             this.Controls.Add(this.btnAddServer);
@@ -276,6 +308,10 @@
         public System.Windows.Forms.TextBox txtServerAdrress;
         private System.Windows.Forms.Label label4;
         public System.Windows.Forms.ComboBox HealthMonitors;
+        private System.Windows.Forms.ColumnHeader Address;
+        private System.Windows.Forms.ColumnHeader Port;
+        private System.Windows.Forms.ColumnHeader Status;
+        public System.Windows.Forms.ListView lstServersView;
     }
 }
 

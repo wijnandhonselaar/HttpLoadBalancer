@@ -21,7 +21,7 @@ namespace HttpLoadBalancer.Models.Methods
         public override Server GetServer(List<Server> servers)
         {
             var index = new Random().Next(0, servers.Count);
-            while (!MethodService.Monitor.IsHealthy(servers[index].Address))
+            while (!MethodService.Monitor.IsHealthy(servers[index]))
             {
                 index = new Random().Next(0, servers.Count);
             }

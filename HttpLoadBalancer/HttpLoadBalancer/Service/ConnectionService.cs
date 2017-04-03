@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.Pipes;
 using System.Linq;
+using System.Net;
+using System.Net.Cache;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -10,15 +13,17 @@ using System.Threading.Tasks;
 using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Models;
 using HttpLoadBalancer.Models.HealthMonitors;
+using Cookie = HttpLoadBalancer.Models.Cookie;
 
 namespace HttpLoadBalancer.Service
 {
     public class ConnectionService
     {
-        const int BufferSize = 2048;
+        const int BufferSize = 65536;
 
         public List<Server> Servers = new List<Server>();
         public Server SelectedServer;
+        public Dictionary<string, Cookie> Sessions = new Dictionary<string, Cookie>();
 
         public async Task HandleRequest(TcpClient client)
         {
@@ -28,6 +33,7 @@ namespace HttpLoadBalancer.Service
                 if (request != null && IsValidRequest(request))
                 {
                     var responseStream = await SendeRequest(request);
+                    if (request.Properties["Url"] == "{[Url, /favicon.ico]}") return;
                     var i = 0;
 
                     while (!responseStream.DataAvailable)
@@ -36,10 +42,53 @@ namespace HttpLoadBalancer.Service
                         if (i > 5) break;
                         Thread.Sleep(50);
                     }
-                    var response = await GetResponse(responseStream);
-                    SendResponse(stream, response);
+                    if (responseStream.DataAvailable)
+                    {
+                        var response = await GetResponse(responseStream);
+                        SetCookies(response);
+                        if (response != null) SendResponse(stream, response);
+                    }
                 }
             }
+        }
+
+        private void SetCookies(HttpMessage response)
+        {
+            if (!response.Properties.ContainsKey("set-cookie")) return;
+            var value = response.Properties["set-cookie"];
+            var split = value.Split(';');
+            string key = null;
+            string expires = null;
+            foreach (var item in split)
+            {
+                if (item.Contains("connect.sid"))
+                {
+                    key = item.Split('=')[1];
+                }
+                if (item.Contains("Expires"))
+                {
+                    expires = item.Split('=')[1];
+                }
+            }
+            if (key == null) return;
+            if (!Sessions.ContainsKey(key)) Sessions.Add(key, new Cookie(SelectedServer, expires));
+        }
+
+        public Server GetServerFromCookie(HttpMessage request)
+        {
+            if (!request.Properties.ContainsKey("Cookie")) return null;
+            var value = request.Properties["Cookie"];
+            var split = value.Split(';');
+            string key = null;
+            foreach (var item in split)
+            {
+                if (item.Contains("connect.sid"))
+                {
+                    key = item.Split('=')[1];
+                }
+            }
+            if (key == null) return null;
+            return Sessions.ContainsKey(key) ? Sessions[key].Server : null;
         }
 
         public List<Server> GetDefaultServers()
@@ -71,21 +120,21 @@ namespace HttpLoadBalancer.Service
         private async Task<NetworkStream> SendeRequest(HttpMessage request)
         {
             // httpMessage for session persistence (cookie)
-            SelectedServer = MethodService.CurrentMethod.GetServer(Servers);
+            SelectedServer = GetServerFromCookie(request);
+            if(SelectedServer == null) SelectedServer = MethodService.CurrentMethod.GetServer(Servers);
             HttpMapper.SetUrl(request, SelectedServer);
             var serverClient = new TcpClient();
             serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
             var serverStream = serverClient.GetStream();
             var requestArray = HttpMapper.ToRequest(request);
-            await serverStream.WriteAsync(requestArray, 0, requestArray.Length, CancellationToken.None);
+            await serverStream.WriteAsync(requestArray, 0, requestArray.Length);
             return serverStream;
         }
 
         private async Task<HttpMessage> GetResponse (NetworkStream stream)
         {
-            var buffer = new byte[BufferSize];
-            HttpMessage response = null;
-            if (!stream.DataAvailable) return response;
+            byte[] buffer = new byte[BufferSize];
+            Thread.Sleep(100);
             try
             {
                 await stream.ReadAsync(buffer, 0, BufferSize);
@@ -95,8 +144,7 @@ namespace HttpLoadBalancer.Service
                 Console.WriteLine(e);
                 throw(e);
             }
-            response = new HttpMessage(buffer, true);
-            return response;
+            return new HttpMessage(buffer, true);
         }
 
         private void SendResponse(NetworkStream stream, HttpMessage message)

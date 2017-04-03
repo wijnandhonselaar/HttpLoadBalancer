@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Model;
 using HttpLoadBalancer.Models;
@@ -45,6 +46,7 @@ namespace HttpLoadBalancer.Controller
         
         private void InitGuiData()
         {
+            _gui.lstServersView.View = System.Windows.Forms.View.Details;
             var methods = _methods.Select(x => x.Name).ToList();
             _gui.BalanceMethod.Items.AddRange(methods.Cast<object>().ToArray());
             _gui.BalanceMethod.SelectedIndex = 0;
@@ -101,7 +103,8 @@ namespace HttpLoadBalancer.Controller
         {
             var server = _connectionService.AddServer(address, port);
             _gui.lstServers.Items.Add($"{address}:{port}");
-            _gui.lstServers.BackColor = Color.Green;
+            var item1 = new ListViewItem(new[] { server.Address, server.Port.ToString(), server.Status.ToString() });
+            _gui.lstServersView.Items.Add(item1);
         }
 
         public async Task Listener()
@@ -130,7 +133,6 @@ namespace HttpLoadBalancer.Controller
             if (server == null) return;
             _gui.lstServers.Items.Remove($"{server.Address}:{server.Port}");
             _connectionService.RemoveServer(server);
-            _gui.lstServers.BackColor = Color.Red;
         }
     }
 }

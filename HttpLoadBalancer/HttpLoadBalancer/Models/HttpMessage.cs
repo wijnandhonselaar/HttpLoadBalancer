@@ -16,6 +16,9 @@ namespace HttpLoadBalancer.Models
             context = context.Replace("\0", "");
             if (!isReponse && context.Length > 0)
                 Properties = HttpMapper.ToRequestHead(context);
+            else if(isReponse && context.Length > 0)
+                Properties = HttpMapper.ToResponseHead(context);
+
         }
 
         public byte[] Original { get; set; }
@@ -61,6 +64,7 @@ namespace HttpLoadBalancer.Models
             }
             return request;
         }
+
         public static Dictionary<string, string> ToResponseHead(string context)
         {
             var response = new Dictionary<string, string>();
@@ -90,12 +94,40 @@ namespace HttpLoadBalancer.Models
                 else
                 {
                     var statusLine = lines[i].Split(' ');
-                    response.Add("Method", statusLine[0]);
-                    response.Add("Url", statusLine[1]);
-                    response.Add("HttpVersion", statusLine[2]);
+                    response.Add("ProtocolVersion", statusLine[0]);
+                    response.Add("StatusCode", statusLine[1]);
+                    response.Add("StatusDescription", statusLine[2]);
                 }
             }
             return response;
+        }
+        public static string GetHead(HttpMessage message)
+        {
+            var head = "";
+            // status line
+            head += "HTTP/" + message.Properties["ProtocolVersion"] + " " + message.Properties["StatusCode"] + " " +
+                    message.Properties["StatusDescription"] + "\r\n";
+            // Date
+            head += ToHeaderProperty("Date", message.Properties["Date"]);
+            // Server
+            head += ToHeaderProperty("Server", message.Properties["Server"]);
+            // Content-Type
+            head += ToHeaderProperty("Content-Type", message.Properties["ContentType"]);
+            // Content-Length
+            head += ToHeaderProperty("Content-Length", message.Properties["ContentLength"]);
+
+            return head;
+        }
+
+        /// <summary>
+        /// returns key and value as one string in the format used in a http header
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static string ToHeaderProperty(string key, string value)
+        {
+            return key + ": " + value + "\r\n";
         }
 
         public static List<string> RequestToList(string text)

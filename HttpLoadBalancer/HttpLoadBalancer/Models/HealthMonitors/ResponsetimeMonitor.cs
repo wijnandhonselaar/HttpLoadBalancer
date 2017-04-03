@@ -14,7 +14,7 @@ namespace HttpLoadBalancer.Models.HealthMonitors
     {
         public Server PickServer(List<Server> servers)
         {
-            var times = servers.Select(server => ping(server.Address)).ToList();
+            var times = servers.Select(server => Ping(server.Address)).ToList();
             return servers[times.IndexOf(times.Min())];
         }
 
@@ -22,11 +22,11 @@ namespace HttpLoadBalancer.Models.HealthMonitors
         {
             foreach (var server in servers)
             {
-                server.Status = ping(server.Address) > 0 ? Status.Online : Status.Offline;
+                server.Status = Ping(server.Address) > 0 ? Status.Online : Status.Offline;
             }
         }
 
-        private long ping(string address)
+        public long Ping(string address)
         {
             var x = new Ping();
             var reply = x.Send(address);
@@ -38,9 +38,11 @@ namespace HttpLoadBalancer.Models.HealthMonitors
             return pingTime;
         }
 
-        public bool IsHealthy(string address)
+        public bool IsHealthy(Server server)
         {
-            return ping(address) > 0;
+            var time = Ping(server.Address);
+            server.Status = time > 0 ? Status.Online : Status.Offline;
+            return time > 0;
         }
     }
 }

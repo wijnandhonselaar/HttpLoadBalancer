@@ -21,11 +21,12 @@ namespace HttpLoadBalancer.Models.Methods
         /// <returns></returns>
         public override Server GetServer(List<Server> servers)
         {
-            while (!MethodService.Monitor.IsHealthy(servers[_index].Address))
+            while (!MethodService.Monitor.IsHealthy(servers[_index]))
             {
                 _index++;
             }
             var server = servers[_index];
+            _index++;
             if (_index == servers.Count) _index = 0;
             return server;
         }
