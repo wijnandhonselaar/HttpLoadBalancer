@@ -52,6 +52,7 @@ namespace HttpLoadBalancer.Service
             }
         }
 
+        // TODO create session persistence method
         private void SetCookies(HttpMessage response)
         {
             if (!response.Properties.ContainsKey("set-cookie")) return;
