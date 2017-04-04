@@ -48,13 +48,16 @@
   <ItemGroup>
     <Compile Include="Interfaces\IHealthMonitor.cs" />
     <Compile Include="Interfaces\IPersistenceMethod.cs" />
-    <Compile Include="Models\HealthMonitors\ResponsetimeMonitor.cs" />
-    <Compile Include="Models\PersistenceMethods\CookiePersistenceMethod.cs" />
+    <Compile Include="Models\Cookie.cs" />
+    <Compile Include="Service\HealthMonitors\ResponsetimeMonitor.cs" />
+    <Compile Include="Models\Methods\PingMethod.cs" />
     <Compile Include="Models\Methods\RandomMethod.cs" />
     <Compile Include="Models\Methods\RoundRobinMethod.cs" />
-    <Compile Include="Models\PersistenceMethods\SessionPersistenceMethod.cs" />
     <Compile Include="Service\ConnectionService.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Service\PersistenceMethods\CookiePersistence.cs" />
+    <Compile Include="Service\PersistenceMethods\SessionPersistence.cs" />
+    <Compile Include="Service\SessionService.cs" />
     <Compile Include="View\Gui.cs">
       <SubType>Form</SubType>
     </Compile>

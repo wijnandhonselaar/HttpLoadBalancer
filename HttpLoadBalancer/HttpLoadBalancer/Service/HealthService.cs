@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using HttpLoadBalancer.Model;
 using HttpLoadBalancer.Models;
 
 namespace HttpLoadBalancer.Service

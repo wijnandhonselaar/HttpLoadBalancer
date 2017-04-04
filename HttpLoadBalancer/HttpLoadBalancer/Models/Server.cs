@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using HttpLoadBalancer.Model;
 
 namespace HttpLoadBalancer.Models
 {
