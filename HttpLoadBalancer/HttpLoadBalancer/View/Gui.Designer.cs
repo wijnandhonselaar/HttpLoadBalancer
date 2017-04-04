@@ -49,6 +49,8 @@
             this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lstServersView = new System.Windows.Forms.ListView();
+            this.label5 = new System.Windows.Forms.Label();
+            this.PersistenceMethods = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numServerPort)).BeginInit();
             this.SuspendLayout();
@@ -57,14 +59,14 @@
             // 
             this.BalanceMethod.AllowDrop = true;
             this.BalanceMethod.FormattingEnabled = true;
-            this.BalanceMethod.Location = new System.Drawing.Point(498, 96);
+            this.BalanceMethod.Location = new System.Drawing.Point(526, 97);
             this.BalanceMethod.Name = "BalanceMethod";
             this.BalanceMethod.Size = new System.Drawing.Size(121, 21);
             this.BalanceMethod.TabIndex = 0;
             // 
             // btnToggleLoadBalancer
             // 
-            this.btnToggleLoadBalancer.Location = new System.Drawing.Point(498, 67);
+            this.btnToggleLoadBalancer.Location = new System.Drawing.Point(526, 68);
             this.btnToggleLoadBalancer.Name = "btnToggleLoadBalancer";
             this.btnToggleLoadBalancer.Size = new System.Drawing.Size(75, 23);
             this.btnToggleLoadBalancer.TabIndex = 1;
@@ -93,7 +95,7 @@
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(463, 43);
+            this.lblPort.Location = new System.Drawing.Point(491, 44);
             this.lblPort.Name = "lblPort";
             this.lblPort.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.lblPort.Size = new System.Drawing.Size(29, 13);
@@ -104,7 +106,7 @@
             // lblMethod
             // 
             this.lblMethod.AutoSize = true;
-            this.lblMethod.Location = new System.Drawing.Point(446, 99);
+            this.lblMethod.Location = new System.Drawing.Point(474, 100);
             this.lblMethod.Name = "lblMethod";
             this.lblMethod.Size = new System.Drawing.Size(46, 13);
             this.lblMethod.TabIndex = 7;
@@ -114,7 +116,7 @@
             // lblMethodSummary
             // 
             this.lblMethodSummary.AutoSize = true;
-            this.lblMethodSummary.Location = new System.Drawing.Point(449, 214);
+            this.lblMethodSummary.Location = new System.Drawing.Point(478, 238);
             this.lblMethodSummary.MaximumSize = new System.Drawing.Size(200, 200);
             this.lblMethodSummary.Name = "lblMethodSummary";
             this.lblMethodSummary.Size = new System.Drawing.Size(0, 13);
@@ -132,7 +134,7 @@
             // 
             // txtServerAdrress
             // 
-            this.txtServerAdrress.Location = new System.Drawing.Point(498, 154);
+            this.txtServerAdrress.Location = new System.Drawing.Point(527, 178);
             this.txtServerAdrress.Name = "txtServerAdrress";
             this.txtServerAdrress.Size = new System.Drawing.Size(120, 20);
             this.txtServerAdrress.TabIndex = 10;
@@ -147,7 +149,7 @@
             // 
             // numPort
             // 
-            this.numPort.Location = new System.Drawing.Point(498, 41);
+            this.numPort.Location = new System.Drawing.Point(526, 42);
             this.numPort.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -164,7 +166,7 @@
             // 
             // numServerPort
             // 
-            this.numServerPort.Location = new System.Drawing.Point(498, 180);
+            this.numServerPort.Location = new System.Drawing.Point(527, 204);
             this.numServerPort.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -182,7 +184,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(444, 157);
+            this.label3.Location = new System.Drawing.Point(473, 181);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(48, 13);
             this.label3.TabIndex = 16;
@@ -192,7 +194,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(463, 182);
+            this.label2.Location = new System.Drawing.Point(492, 206);
             this.label2.Name = "label2";
             this.label2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.label2.Size = new System.Drawing.Size(29, 13);
@@ -202,7 +204,7 @@
             // 
             // btnAddServer
             // 
-            this.btnAddServer.Location = new System.Drawing.Point(498, 209);
+            this.btnAddServer.Location = new System.Drawing.Point(527, 233);
             this.btnAddServer.Name = "btnAddServer";
             this.btnAddServer.Size = new System.Drawing.Size(75, 23);
             this.btnAddServer.TabIndex = 18;
@@ -213,7 +215,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(416, 126);
+            this.label4.Location = new System.Drawing.Point(444, 127);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(81, 13);
             this.label4.TabIndex = 20;
@@ -224,7 +226,7 @@
             // 
             this.HealthMonitors.AllowDrop = true;
             this.HealthMonitors.FormattingEnabled = true;
-            this.HealthMonitors.Location = new System.Drawing.Point(498, 123);
+            this.HealthMonitors.Location = new System.Drawing.Point(526, 124);
             this.HealthMonitors.Name = "HealthMonitors";
             this.HealthMonitors.Size = new System.Drawing.Size(121, 21);
             this.HealthMonitors.TabIndex = 19;
@@ -257,11 +259,33 @@
             this.lstServersView.TabIndex = 21;
             this.lstServersView.UseCompatibleStateImageBehavior = false;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(417, 154);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(104, 13);
+            this.label5.TabIndex = 23;
+            this.label5.Text = "Persistence Method:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // PersistenceMethods
+            // 
+            this.PersistenceMethods.AllowDrop = true;
+            this.PersistenceMethods.FormattingEnabled = true;
+            this.PersistenceMethods.Location = new System.Drawing.Point(526, 151);
+            this.PersistenceMethods.Name = "PersistenceMethods";
+            this.PersistenceMethods.Size = new System.Drawing.Size(121, 21);
+            this.PersistenceMethods.TabIndex = 22;
+            this.PersistenceMethods.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(630, 764);
+            this.ClientSize = new System.Drawing.Size(655, 764);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.PersistenceMethods);
             this.Controls.Add(this.lstServersView);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.HealthMonitors);
@@ -312,6 +336,8 @@
         private System.Windows.Forms.ColumnHeader Port;
         private System.Windows.Forms.ColumnHeader Status;
         public System.Windows.Forms.ListView lstServersView;
+        private System.Windows.Forms.Label label5;
+        public System.Windows.Forms.ComboBox PersistenceMethods;
     }
 }
 

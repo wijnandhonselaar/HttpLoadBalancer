@@ -12,7 +12,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Models;
-using HttpLoadBalancer.Models.HealthMonitors;
 using Cookie = HttpLoadBalancer.Models.Cookie;
 
 namespace HttpLoadBalancer.Service
@@ -21,7 +20,6 @@ namespace HttpLoadBalancer.Service
     {
         const int BufferSize = 65536;
 
-        public List<Server> Servers = new List<Server>();
         public Server SelectedServer;
         public Dictionary<string, Cookie> Sessions = new Dictionary<string, Cookie>();
 
@@ -45,51 +43,11 @@ namespace HttpLoadBalancer.Service
                     if (responseStream.DataAvailable)
                     {
                         var response = await GetResponse(responseStream);
-                        SetCookies(response);
+                        SessionService.SaveSession(response, SelectedServer);
                         if (response != null) SendResponse(stream, response);
                     }
                 }
             }
-        }
-
-        // TODO create session persistence method
-        private void SetCookies(HttpMessage response)
-        {
-            if (!response.Properties.ContainsKey("set-cookie")) return;
-            var value = response.Properties["set-cookie"];
-            var split = value.Split(';');
-            string key = null;
-            string expires = null;
-            foreach (var item in split)
-            {
-                if (item.Contains("connect.sid"))
-                {
-                    key = item.Split('=')[1];
-                }
-                if (item.Contains("Expires"))
-                {
-                    expires = item.Split('=')[1];
-                }
-            }
-            if (key == null) return;
-            if (!Sessions.ContainsKey(key)) Sessions.Add(key, new Cookie(SelectedServer, expires));
-        }
-
-        public Server GetServerFromCookie(HttpMessage request)
-        {
-            if (!request.Properties.ContainsKey("Cookie")) return null;
-            var value = request.Properties["Cookie"];
-            var split = value.Split(';');
-            string key = null;
-            foreach (var item in split)
-            {
-                if (item.Contains("connect.sid"))
-                {
-                    key = item.Split('=')[1];
-                }
-            }
-            if (key == null) return null;
-            return Sessions.ContainsKey(key) ? Sessions[key].Server : null;
         }
 
         public List<Server> GetDefaultServers()
@@ -121,8 +79,8 @@ namespace HttpLoadBalancer.Service
         private async Task<NetworkStream> SendeRequest(HttpMessage request)
         {
             // httpMessage for session persistence (cookie)
-            SelectedServer = GetServerFromCookie(request);
-            if(SelectedServer == null) SelectedServer = MethodService.CurrentMethod.GetServer(Servers);
+            SelectedServer = SessionService.GetServerFromSession(request) ??
+                             MethodService.CurrentMethod.GetServer(SessionService.Servers);
             HttpMapper.SetUrl(request, SelectedServer);
             var serverClient = new TcpClient();
             serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
@@ -156,10 +114,11 @@ namespace HttpLoadBalancer.Service
         public Server AddServer(string address, int port)
         {
             var server = new Server(address, port);
-            Servers.Add(server);
+            SessionService.AddServer(server);
             return server;
         }
 
-        public bool RemoveServer(Server server) => Servers.Remove(server);
+        public bool RemoveServer(Server server) => SessionService.RemoveServer(server);
+        public bool RemoveServer(string address, int port) => SessionService.RemoveServer(address, port);
     }
 }

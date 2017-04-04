@@ -14,6 +14,9 @@ namespace HttpLoadBalancer.View
         {
             InitializeComponent();
             _controller = new GuiController(this);
+            BalanceMethod.SelectedIndex = 0;
+            HealthMonitors.SelectedIndex = 0;
+            PersistenceMethods.SelectedIndex = 0;
         }
 
         private void btnToggleLoadBalancer_Click(object sender, System.EventArgs e)
@@ -37,6 +40,11 @@ namespace HttpLoadBalancer.View
         private void HealthMonitor_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             _controller.SetHealthMonitor((string)HealthMonitors.SelectedItem);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            _controller.SetPersistenceMethod((string) PersistenceMethods.SelectedItem);
         }
     }
 }

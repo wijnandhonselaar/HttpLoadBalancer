@@ -13,7 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HttpLoadBalancer.Interfaces;
-using HttpLoadBalancer.Model;
 using HttpLoadBalancer.Models;
 using HttpLoadBalancer.Service;
 using HttpLoadBalancer.View;
@@ -30,6 +29,7 @@ namespace HttpLoadBalancer.Controller
         private TcpListener _listener;
         private bool _listening = false;
         private Dictionary<string, string> _healthMonitors;
+        private Dictionary<string, string> _persistenceMethods;
         /// <summary>
         /// Constructor GuiController
         /// </summary>
@@ -49,22 +49,11 @@ namespace HttpLoadBalancer.Controller
             _gui.lstServersView.View = System.Windows.Forms.View.Details;
             var methods = _methods.Select(x => x.Name).ToList();
             _gui.BalanceMethod.Items.AddRange(methods.Cast<object>().ToArray());
-            _gui.BalanceMethod.SelectedIndex = 0;
 
+            SetHealthMonitorOptions();
 
-            _healthMonitors = new Dictionary<string, string>();
-            var type = typeof(IHealthMonitor);
-            var monitorTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => type.IsAssignableFrom(p));
-            foreach (var monitor in monitorTypes)
-            {
-                if (monitor.Name != "IHealthMonitor")
-                    _healthMonitors.Add(monitor.Name, monitor.FullName);
-                    
-            }
-            _gui.HealthMonitors.Items.AddRange(_healthMonitors.Select(monitor => monitor.Key).ToArray());
-            SetHealthMonitor((string)_gui.HealthMonitors.Items[0]);
+            SetPersistenceMethods();
+            
             foreach (var server in _connectionService.GetDefaultServers())
             {
                 AddServer(server.Address, server.Port);
@@ -72,11 +61,50 @@ namespace HttpLoadBalancer.Controller
 
         }
 
+        private void SetPersistenceMethods()
+        {
+            // Set Persistence Methods
+            _persistenceMethods = new Dictionary<string, string>();
+            var pType = typeof(IPersistenceMethod);
+            var methodTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => pType.IsAssignableFrom(p));
+            foreach (var method in methodTypes)
+            {
+                if (method.Name != "IPersistenceMethod")
+                    _persistenceMethods.Add(method.Name, method.FullName);
+            }
+            _gui.PersistenceMethods.Items.AddRange(_persistenceMethods.Select(method => method.Key).ToArray());
+        }
+
+        private void SetHealthMonitorOptions()
+        {
+            // Set Health monitors
+            _healthMonitors = new Dictionary<string, string>();
+            var monitorType = typeof(IHealthMonitor);
+            var monitorTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => monitorType.IsAssignableFrom(p));
+            foreach (var monitor in monitorTypes)
+            {
+                if (monitor.Name != "IHealthMonitor")
+                    _healthMonitors.Add(monitor.Name, monitor.FullName);
+            }
+            _gui.HealthMonitors.Items.AddRange(_healthMonitors.Select(monitor => monitor.Key).ToArray());
+        }
+
         public void SetHealthMonitor(string name)
         {
             var type = Type.GetType(_healthMonitors[name]);
             if (type != null)
                 MethodService.Monitor = Activator.CreateInstance(type) as IHealthMonitor;
+        }
+
+        public void SetPersistenceMethod(string name)
+        {
+            var type = Type.GetType(_persistenceMethods[name]);
+            if (type != null)
+                SessionService.SessionManager = Activator.CreateInstance(type) as IPersistenceMethod;
         }
 
         public bool StartServer()
@@ -128,11 +156,10 @@ namespace HttpLoadBalancer.Controller
 
         public void RemoveServer(string item)
         {
-
-            var server = _connectionService.Servers.FirstOrDefault(x => x.Address == item.Split(':')[0] && x.Port == int.Parse(item.Split(':')[1]));
-            if (server == null) return;
-            _gui.lstServers.Items.Remove($"{server.Address}:{server.Port}");
-            _connectionService.RemoveServer(server);
+            var address = item.Split(':')[0];
+            var port = int.Parse(item.Split(':')[1]);
+            _gui.lstServers.Items.Remove($"{address}:{port}");
+            _connectionService.RemoveServer(address, port);
         }
     }
 }
