@@ -7,6 +7,8 @@ namespace HttpLoadBalancer.Interfaces
     public interface IPersistenceMethod
     {
         HttpMessage SaveSession(HttpMessage response, Server currentServer);
+        bool HasSession(HttpMessage message);
+        bool HasValidSession(HttpMessage message);
         Server GetServerFromSession(HttpMessage request);
     }
 }

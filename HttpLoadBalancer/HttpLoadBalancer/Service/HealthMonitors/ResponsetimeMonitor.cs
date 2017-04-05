@@ -33,7 +33,13 @@ namespace HttpLoadBalancer.Service.HealthMonitors
             var message = "/ HTTP/1.1\r\n" +
                           $"Host: {server.Address}\r\n" +
                           "Connection: keep-alive\r\n" +
-                          "Content-Length: 0\r\n";
+                          "Content-Length: 0\r\n\r\n";
+            var serverClient = new TcpClient(server.Address, server.Port);
+            var bytes = Encoding.ASCII.GetBytes(message);
+
+            var sentTime = DateTime.Now;
+            serverClient.GetStream().Write(bytes, 0, bytes.Length);
+
             return 1;
         }
 
@@ -70,12 +76,12 @@ namespace HttpLoadBalancer.Service.HealthMonitors
             {
                 var x = new TcpClient();
                 x.Connect(server.Address, server.Port);
+                return true;
             }
             catch
             {
                 return false;
             }
-            return false;
         }
     }
 }

@@ -25,6 +25,7 @@ namespace HttpLoadBalancer.Models.Methods
             while (!MethodService.Monitor.IsHealthy(servers[_index]))
             {
                 _index++;
+                if (_index == servers.Count) _index = 0;
             }
             var server = servers[_index];
             _index++;
