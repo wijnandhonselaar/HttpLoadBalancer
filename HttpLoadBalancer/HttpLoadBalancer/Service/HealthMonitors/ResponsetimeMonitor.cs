@@ -1,6 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Models;
 
@@ -10,35 +16,66 @@ namespace HttpLoadBalancer.Service.HealthMonitors
     {
         public Server PickServer(List<Server> servers)
         {
-            var times = servers.Select(server => Ping(server.Address)).ToList();
+            var times = servers.Select(async server => await Ping(server)).ToList();
             return servers[times.IndexOf(times.Min())];
         }
 
-        public void UpdateServerStatus(List<Server> servers)
+        public async void UpdateServerStatus(List<Server> servers)
         {
             foreach (var server in servers)
             {
-                server.Status = Ping(server.Address) > 0 ? Status.Online : Status.Offline;
+                server.Status = IsHealthy(server) ? Status.Online : Status.Offline;
             }
         }
 
-        public long Ping(string address)
+        public async Task<long> Ping(Server server)
         {
-            var x = new Ping();
-            var reply = x.Send(address);
-            long pingTime = 0;
-            if (reply?.Status == IPStatus.Success)
+            var message = "/ HTTP/1.1\r\n" +
+                          $"Host: {server.Address}\r\n" +
+                          "Connection: keep-alive\r\n" +
+                          "Content-Length: 0\r\n";
+            return 1;
+        }
+
+        public static byte[] ToRequest(HttpMessage message)
+        {
+            var request = "";
+            var statusLine = new List<string> { "Method", "Url", "HttpVersion" };
+            foreach (var prop in message.Properties)
             {
-                pingTime = reply.RoundtripTime;
+                if (statusLine.Contains(prop.Key))
+                {
+
+                    if (prop.Key == "HttpVersion")
+                        request += $"{prop.Value}\r\n";
+                    else
+                        request += $"{prop.Value} ";
+                }
+                else if (prop.Key == "Body")
+                {
+                    request += "\r\n";
+                    request += prop.Value.Trim().Replace("\0", "");
+                }
+                else
+                {
+                    request += $"{prop.Key}: {prop.Value.Trim()}\r\n";
+                }
             }
-            return pingTime;
+            return Encoding.ASCII.GetBytes(request);
         }
 
         public bool IsHealthy(Server server)
         {
-            var time = Ping(server.Address);
-            server.Status = time > 0 ? Status.Online : Status.Offline;
-            return time > 0;
+            try
+            {
+                var x = new TcpClient();
+                x.Connect(server.Address, server.Port);
+            }
+            catch
+            {
+                return false;
+            }
+            return false;
         }
     }
 }

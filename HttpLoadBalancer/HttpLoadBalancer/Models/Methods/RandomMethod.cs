@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using HttpLoadBalancer.Service;
+using System.Threading.Tasks;
 
 namespace HttpLoadBalancer.Models.Methods
 {

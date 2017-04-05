@@ -15,7 +15,7 @@ namespace HttpLoadBalancer.Service
         {
             new RandomMethod(),
             new RoundRobinMethod(),
-            new PingMethod()
+            //new PingMethod()
         };
 
         public static bool SetMethod(string methodName)

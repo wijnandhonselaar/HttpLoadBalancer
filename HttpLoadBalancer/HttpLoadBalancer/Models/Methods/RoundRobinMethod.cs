@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using HttpLoadBalancer.Service;
 
 namespace HttpLoadBalancer.Models.Methods
