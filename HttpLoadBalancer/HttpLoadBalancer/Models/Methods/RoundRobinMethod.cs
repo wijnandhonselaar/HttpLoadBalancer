@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using HttpLoadBalancer.Service;
 
 namespace HttpLoadBalancer.Models.Methods
@@ -24,6 +25,7 @@ namespace HttpLoadBalancer.Models.Methods
             while (!MethodService.Monitor.IsHealthy(servers[_index]))
             {
                 _index++;
+                if (_index == servers.Count) _index = 0;
             }
             var server = servers[_index];
             _index++;

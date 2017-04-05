@@ -34,11 +34,41 @@ namespace HttpLoadBalancer.Service.PersistenceMethods
             return response;
         }
 
-        public Server GetServerFromSession(HttpMessage request)
+        public Server GetServerFromSession(HttpMessage message)
+        {
+            var key = GetKey(message);
+            if (key == null) return null;
+            var serverFromSession = GetSessionServer(key);
+            if (serverFromSession != null && SessionService.Servers.Any(x => x.Address == serverFromSession.Address && x.Port == serverFromSession.Port && x.Status == Status.Online))
+                return serverFromSession;
+            return null;
+        }
+
+        public bool HasSession(HttpMessage message)
+        {
+            var key = GetKey(message);
+            if (key == null) return false;
+            return GetSessionServer(key) != null;
+        }
+
+        private Server GetSessionServer(string key)
         {
             var sessions = SessionService.Sessions;
-            if (!request.Properties.ContainsKey("Cookie")) return null;
-            var value = request.Properties["Cookie"];
+            return sessions.ContainsKey(key) ? sessions[key].Server : null;
+        }
+
+        public bool HasValidSession(HttpMessage message)
+        {
+            var sessions = SessionService.Sessions;
+            var key = GetKey(message);
+            var serverFromSession = key != null && sessions.ContainsKey(key) ? sessions[key].Server : null;
+            return serverFromSession != null && SessionService.Servers.Contains(serverFromSession);
+        }
+
+        private string GetKey(HttpMessage message)
+        {
+            if (!message.Properties.ContainsKey("Cookie")) return null;
+            var value = message.Properties["Cookie"];
             var split = value.Split(';');
             string key = null;
             foreach (var item in split)
@@ -48,8 +78,7 @@ namespace HttpLoadBalancer.Service.PersistenceMethods
                     key = item.Split('=')[1];
                 }
             }
-            // TODO RETURNED NU OOK SERVERS DIE NIET MEER IN DE SERVERS LIJST STAAN
-            return key != null && sessions.ContainsKey(key) ? sessions[key].Server : null;
+            return key;
         }
     }
 }

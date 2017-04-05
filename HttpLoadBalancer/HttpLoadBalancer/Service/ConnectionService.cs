@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO.Pipes;
-using System.Linq;
-using System.Net;
-using System.Net.Cache;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Models;
 using Cookie = HttpLoadBalancer.Models.Cookie;
 
@@ -22,6 +16,7 @@ namespace HttpLoadBalancer.Service
 
         public Server SelectedServer;
         public Dictionary<string, Cookie> Sessions = new Dictionary<string, Cookie>();
+        public bool SessionsEnabled = true;
 
         public async Task HandleRequest(TcpClient client)
         {
@@ -31,9 +26,12 @@ namespace HttpLoadBalancer.Service
                 if (request != null && IsValidRequest(request))
                 {
                     var responseStream = await SendeRequest(request);
-                    if (request.Properties["Url"] == "{[Url, /favicon.ico]}") return;
+                    if (responseStream == null)
+                    {
+                        ServerUnavailable(stream);
+                        return;
+                    }
                     var i = 0;
-
                     while (!responseStream.DataAvailable)
                     {
                         i++;
@@ -48,17 +46,6 @@ namespace HttpLoadBalancer.Service
                     }
                 }
             }
-        }
-
-        public List<Server> GetDefaultServers()
-        {
-            return new List<Server>
-            {
-                new Server("server4.tezzt.nl", 8081),
-                new Server("server4.tezzt.nl", 8082),
-                new Server("server4.tezzt.nl", 8083),
-                new Server("server4.tezzt.nl", 8084)
-            };
         }
     
         private bool IsValidRequest(HttpMessage request)
@@ -79,9 +66,23 @@ namespace HttpLoadBalancer.Service
         private async Task<NetworkStream> SendeRequest(HttpMessage request)
         {
             // httpMessage for session persistence (cookie)
-            SelectedServer = SessionService.GetServerFromSession(request) ??
-                             MethodService.CurrentMethod.GetServer(SessionService.Servers);
-            HttpMapper.SetUrl(request, SelectedServer);
+            // Has session
+            if (SessionsEnabled && SessionService.SessionManager.HasSession(request))
+            {
+                // has Valid session
+                if (SessionService.SessionManager.HasValidSession(request))
+                {
+                    SelectedServer = SessionService.GetServerFromSession(request);
+                }
+                else // has no valid session, return 503 Service Unavailable 
+                {
+                    return null;
+                }
+            }
+            else // has no session, use load-balancer to pick a server
+            {
+                SelectedServer = MethodService.CurrentMethod.GetServer(SessionService.Servers);
+            }
             var serverClient = new TcpClient();
             serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
             var serverStream = serverClient.GetStream();
@@ -90,7 +91,14 @@ namespace HttpLoadBalancer.Service
             return serverStream;
         }
 
-        private async Task<HttpMessage> GetResponse (NetworkStream stream)
+        private void ServerUnavailable(NetworkStream stream)
+        {
+            var head = "HTTP/1.1 503 server unavailable\r\nContent-Length: 0\r\n\r\n";
+            var errorBuffer = Encoding.ASCII.GetBytes(head);
+            stream.Write(errorBuffer, 0, errorBuffer.Length);
+        }
+
+        private async Task<HttpMessage> GetResponse (Stream stream)
         {
             byte[] buffer = new byte[BufferSize];
             Thread.Sleep(100);
@@ -108,14 +116,38 @@ namespace HttpLoadBalancer.Service
 
         private void SendResponse(NetworkStream stream, HttpMessage message)
         {
-            stream.Write(message.Original, 0 , message.Original.Length);
+            var result = HttpMapper.GetHead(message);
+            var resultBuffer = Encoding.ASCII.GetBytes(result);
+            stream.Write(resultBuffer, 0 , resultBuffer.Length);
         }
 
         public Server AddServer(string address, int port)
         {
             var server = new Server(address, port);
+            try
+            {
+                using (var tcpClient = new TcpClient())
+                {
+                    tcpClient.Connect(server.Address, server.Port);
+                }
+            }
+            catch
+            {
+                return null;
+            }
             SessionService.AddServer(server);
             return server;
+        }
+
+        public List<Server> GetDefaultServers()
+        {
+            return new List<Server>
+            {
+                new Server("server4.tezzt.nl", 8081),
+                new Server("server4.tezzt.nl", 8082),
+                new Server("server4.tezzt.nl", 8083),
+                new Server("server4.tezzt.nl", 8084)
+            };
         }
 
         public bool RemoveServer(Server server) => SessionService.RemoveServer(server);
