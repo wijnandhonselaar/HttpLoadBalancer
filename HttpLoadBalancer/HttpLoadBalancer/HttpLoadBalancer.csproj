@@ -55,6 +55,7 @@
     <Compile Include="Models\Methods\RoundRobinMethod.cs" />
     <Compile Include="Service\ConnectionService.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Service\HttpMapper.cs" />
     <Compile Include="Service\PersistenceMethods\CookiePersistence.cs" />
     <Compile Include="Service\PersistenceMethods\SessionPersistence.cs" />
     <Compile Include="Service\SessionService.cs" />

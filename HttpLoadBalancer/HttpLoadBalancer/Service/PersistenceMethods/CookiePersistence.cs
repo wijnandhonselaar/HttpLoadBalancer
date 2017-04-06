@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using HttpLoadBalancer.Interfaces;
@@ -13,27 +14,65 @@ namespace HttpLoadBalancer.Service.PersistenceMethods
         public HttpMessage SaveSession(HttpMessage response, Server currentServer)
         {
             if (!response.Properties.ContainsKey("set-cookie")) return response;
-            response.Properties["set-cookie"] = $"{currentServer.Address}:{currentServer.Port}";
+            response.Properties["set-cookie"] = $"serverID={currentServer.Address}-{currentServer.Port}";
             return response;
         }
 
-        public Server GetServerFromSession(HttpMessage request)
+        public Server GetServerFromSession(HttpMessage message)
         {
-            // TODO OMZETTEN NAAR COOKIE
-            if (!request.Properties.ContainsKey("Cookie")) return null;
-            var value = request.Properties["Cookie"];
-            var split = value.Split(';');
-            string key = null;
-            foreach (var item in split)
+            var serverFromCookie = GetServerFromMessage(message);
+            return SessionService.Servers.FirstOrDefault(x => x.Address == serverFromCookie.Address && x.Port == serverFromCookie.Port);
+        }
+
+        public bool HasSession(HttpMessage message)
+        {
+            var data = GetCookieArray(message);
+            if (data == null) return false;
+            if (data.Length < 2) return false;
+            try
             {
-                if (item.Contains("connect.sid"))
+                var server = new Server(data[0], int.Parse(data[1]));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool HasValidSession(HttpMessage message)
+        {
+            var server = GetServerFromMessage(message);
+            return
+                SessionService.Servers.Any(
+                    x => x.Address == server.Address && x.Port == server.Port && x.Status == Status.Online);
+        }
+
+        private Server GetServerFromMessage(HttpMessage message)
+        {
+            var data = GetCookieArray(message);
+            if (data == null) return null;
+            var address = data[0];
+            var port = int.Parse(data[1]);
+            return SessionService.Servers.FirstOrDefault(x => x.Address == address && x.Port == port);
+        }
+
+        private string[] GetCookieArray(HttpMessage message)
+        {
+            if (!message.Properties.ContainsKey("Cookie")) return null;
+            var value = message.Properties["Cookie"];
+            if (value.Contains(';'))
+            {
+                var cookies = value.Split(';');
+                foreach (var c in cookies)
                 {
-                    key = item.Split('=')[1];
+                    if (c.Contains("serverID"))
+                    {
+                        value = c;
+                    }
                 }
             }
-            if (key == null) return null;
-            // TODO RETURNED NU OOK SERVERS DIE NIET MEER IN DE SERVERS LIJST STAAN
-            return SessionService.Sessions.ContainsKey(key) ? SessionService.Sessions[key].Server : null;
+            return value.Contains("serverID") ? value.Split('=')[1].Split('-') : null;
         }
     }
 }

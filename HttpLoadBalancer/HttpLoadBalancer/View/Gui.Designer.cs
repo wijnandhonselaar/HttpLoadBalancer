@@ -30,7 +30,6 @@
         {
             this.BalanceMethod = new System.Windows.Forms.ComboBox();
             this.btnToggleLoadBalancer = new System.Windows.Forms.Button();
-            this.lstServers = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lblPort = new System.Windows.Forms.Label();
             this.lblMethod = new System.Windows.Forms.Label();
@@ -47,10 +46,11 @@
             this.HealthMonitors = new System.Windows.Forms.ComboBox();
             this.Address = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Status = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lstServersView = new System.Windows.Forms.ListView();
             this.label5 = new System.Windows.Forms.Label();
             this.PersistenceMethods = new System.Windows.Forms.ComboBox();
+            this.cbEnablePersistence = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numServerPort)).BeginInit();
             this.SuspendLayout();
@@ -73,14 +73,6 @@
             this.btnToggleLoadBalancer.Text = "Start";
             this.btnToggleLoadBalancer.UseVisualStyleBackColor = true;
             this.btnToggleLoadBalancer.Click += new System.EventHandler(this.btnToggleLoadBalancer_Click);
-            // 
-            // lstServers
-            // 
-            this.lstServers.FormattingEnabled = true;
-            this.lstServers.Location = new System.Drawing.Point(12, 41);
-            this.lstServers.Name = "lstServers";
-            this.lstServers.Size = new System.Drawing.Size(398, 264);
-            this.lstServers.TabIndex = 3;
             // 
             // label1
             // 
@@ -124,11 +116,11 @@
             // 
             // btnRemoveServer
             // 
-            this.btnRemoveServer.Location = new System.Drawing.Point(335, 311);
+            this.btnRemoveServer.Location = new System.Drawing.Point(12, 284);
             this.btnRemoveServer.Name = "btnRemoveServer";
-            this.btnRemoveServer.Size = new System.Drawing.Size(75, 23);
+            this.btnRemoveServer.Size = new System.Drawing.Size(378, 21);
             this.btnRemoveServer.TabIndex = 9;
-            this.btnRemoveServer.Text = "Remove";
+            this.btnRemoveServer.Text = "Remove selected servers";
             this.btnRemoveServer.UseVisualStyleBackColor = true;
             this.btnRemoveServer.Click += new System.EventHandler(this.btnRemoveServer_Click);
             // 
@@ -235,27 +227,24 @@
             // Address
             // 
             this.Address.Text = "Address";
+            this.Address.Width = 150;
             // 
             // Port
             // 
             this.Port.Text = "Port";
             // 
-            // Status
-            // 
-            this.Status.Text = "Status";
-            // 
             // lstServersView
             // 
+            this.lstServersView.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.lstServersView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.Address,
-            this.Port,
-            this.Status});
+            this.Port});
+            this.lstServersView.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.lstServersView.GridLines = true;
             this.lstServersView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lstServersView.Location = new System.Drawing.Point(12, 338);
-            this.lstServersView.MultiSelect = false;
+            this.lstServersView.Location = new System.Drawing.Point(12, 44);
             this.lstServersView.Name = "lstServersView";
-            this.lstServersView.Size = new System.Drawing.Size(398, 234);
+            this.lstServersView.Size = new System.Drawing.Size(378, 234);
             this.lstServersView.TabIndex = 21;
             this.lstServersView.UseCompatibleStateImageBehavior = false;
             // 
@@ -279,11 +268,34 @@
             this.PersistenceMethods.TabIndex = 22;
             this.PersistenceMethods.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // cbEnablePersistence
+            // 
+            this.cbEnablePersistence.AutoSize = true;
+            this.cbEnablePersistence.Checked = true;
+            this.cbEnablePersistence.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbEnablePersistence.Location = new System.Drawing.Point(396, 154);
+            this.cbEnablePersistence.Name = "cbEnablePersistence";
+            this.cbEnablePersistence.Size = new System.Drawing.Size(15, 14);
+            this.cbEnablePersistence.TabIndex = 24;
+            this.cbEnablePersistence.UseVisualStyleBackColor = true;
+            this.cbEnablePersistence.CheckedChanged += new System.EventHandler(this.cbEnablePersistence_CheckedChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(168, 22);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(222, 13);
+            this.label6.TabIndex = 25;
+            this.label6.Text = "Checks if servers are online every 5 seconds*";
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(655, 764);
+            this.ClientSize = new System.Drawing.Size(655, 314);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.cbEnablePersistence);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.PersistenceMethods);
             this.Controls.Add(this.lstServersView);
@@ -300,7 +312,6 @@
             this.Controls.Add(this.lblMethod);
             this.Controls.Add(this.lblPort);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.lstServers);
             this.Controls.Add(this.numPort);
             this.Controls.Add(this.btnToggleLoadBalancer);
             this.Controls.Add(this.BalanceMethod);
@@ -320,7 +331,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblPort;
         private System.Windows.Forms.Label lblMethod;
-        public System.Windows.Forms.ListBox lstServers;
         public System.Windows.Forms.Label lblMethodSummary;
         private System.Windows.Forms.Button btnRemoveServer;
         private System.Windows.Forms.Label lblSelectedServer;
@@ -334,10 +344,11 @@
         public System.Windows.Forms.ComboBox HealthMonitors;
         private System.Windows.Forms.ColumnHeader Address;
         private System.Windows.Forms.ColumnHeader Port;
-        private System.Windows.Forms.ColumnHeader Status;
         public System.Windows.Forms.ListView lstServersView;
         private System.Windows.Forms.Label label5;
         public System.Windows.Forms.ComboBox PersistenceMethods;
+        public System.Windows.Forms.CheckBox cbEnablePersistence;
+        private System.Windows.Forms.Label label6;
     }
 }
 
