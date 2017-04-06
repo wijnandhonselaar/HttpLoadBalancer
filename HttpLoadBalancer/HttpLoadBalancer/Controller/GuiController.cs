@@ -105,16 +105,17 @@ namespace HttpLoadBalancer.Controller
         private void InitGuiData()
         {
             _gui.lstServersView.View = System.Windows.Forms.View.Details;
-            _gui.BalanceMethod.Items.AddRange(MethodService.Methods.Cast<object>().ToArray());
+            var methods = MethodService.Methods.Select(x => x.Name);
+            _gui.BalanceMethod.Items.AddRange(methods.ToArray());
 
             SetHealthMonitorOptions();
 
             SetPersistenceMethods();
-            
-            foreach (var server in _connectionService.GetDefaultServers())
-            {
-                AddServer(server.Address, server.Port);
-            }
+
+            //foreach (var server in _connectionService.GetDefaultServers())
+            //{
+            //    AddServer(server.Address, server.Port);
+            //}
 
         }
 

@@ -61,6 +61,7 @@ namespace HttpLoadBalancer.Service
 
         private async Task<HttpMessage> ReceiveRequest(NetworkStream stream)
         {
+            Thread.Sleep(500);
             if (!stream.DataAvailable) return null;
             var buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);

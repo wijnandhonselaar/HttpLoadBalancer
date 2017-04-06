@@ -3,14 +3,26 @@
   <Class Name="HttpLoadBalancer.Service.ConnectionService">
     <Position X="7" Y="3.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAAABAAAIAAAAAAAACASAAABAAAAAAAAA=</HashCode>
+      <HashCode>AAIAgBAAAAEAAABECKIAAAAAAAIEACAAAAAAAAAIAAA=</HashCode>
       <FileName>Service\ConnectionService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Controller.GuiController">
     <Position X="2.5" Y="3.75" Width="1.5" />
+    <NestedTypes>
+      <Delegate Name="HttpLoadBalancer.Controller.GuiController.SetItemColorHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controller\GuiController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="HttpLoadBalancer.Controller.GuiController.AddServerHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controller\GuiController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAABAAAAIAgAAAAAAAAQAAAAAAAAAAAIAAAAAA=</HashCode>
+      <HashCode>AAQAAAAEBQACEAA2AAAAAAAAQAIIAECAAAQAICAIAAA=</HashCode>
       <FileName>Controller\GuiController.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -24,14 +36,14 @@
   <Class Name="HttpLoadBalancer.Models.HttpMessage">
     <Position X="4.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAQ=</HashCode>
       <FileName>Models\HttpMessage.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Models.Server">
-    <Position X="2.5" Y="6.5" Width="1.5" />
+    <Position X="0.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAQ=</HashCode>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAACAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Models\Server.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -41,70 +53,106 @@
   <Class Name="HttpLoadBalancer.View.Gui" Collapsed="true">
     <Position X="2.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACBAIBFAAACAAAACIAAAEAAAACAAAAAAAQE=</HashCode>
+      <HashCode>AGACAAQAECBgIRBIACCAAAECKAAAEAACAAAAAEAAQTE=</HashCode>
       <FileName>View\Gui.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Service.MethodService">
     <Position X="4.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAEA=</HashCode>
+      <HashCode>AAAAAAAAAAgAAAAAAACAAAAAAAAAAAAAAAAAAAEAAEA=</HashCode>
       <FileName>Service\MethodService.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HttpLoadBalancer.Models.Method">
-    <Position X="7" Y="7.25" Width="1.5" />
+    <Position X="7" Y="8" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAABAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\Method.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HttpLoadBalancer.Model.Methods.RoundRobinMethod" Collapsed="true">
-    <Position X="5.75" Y="9.5" Width="1.5" />
+  <Class Name="HttpLoadBalancer.Service.PersistenceMethods.SessionPersistence" Collapsed="true">
+    <Position X="9.25" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\Methods\RoundRobinMethod.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAABAAiAACAAAAAAAAAIA=</HashCode>
+      <FileName>Service\PersistenceMethods\SessionPersistence.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HttpLoadBalancer.Service.PersistenceMethods.CookiePersistence" Collapsed="true">
+    <Position X="11.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAgAAAAAABAAiAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Service\PersistenceMethods\CookiePersistence.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HttpLoadBalancer.Service.HealthMonitors.ResponsetimeMonitor" Collapsed="true">
+    <Position X="10.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAQAAAEAAAAAAAAAAACgAAAAAAAAAAAA=</HashCode>
+      <FileName>Service\HealthMonitors\ResponsetimeMonitor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HttpLoadBalancer.Models.Methods.PingMethod" Collapsed="true">
+    <Position X="10.5" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Methods\PingMethod.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HttpLoadBalancer.Model.Methods.RandomMethod" Collapsed="true">
-    <Position X="7.75" Y="9.5" Width="1.5" />
+  <Class Name="HttpLoadBalancer.Models.Methods.RandomMethod" Collapsed="true">
+    <Position X="7" Y="10" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\Methods\RandomMethod.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HttpLoadBalancer.Model.CookiePersistenceMethod" Collapsed="true">
-    <Position X="11.25" Y="6.25" Width="1.5" />
+  <Class Name="HttpLoadBalancer.Models.Methods.RoundRobinMethod" Collapsed="true">
+    <Position X="8.75" Y="10" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\PersistenceMethods\CookiePersistenceMethod.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Methods\RoundRobinMethod.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HttpLoadBalancer.Models.SessionPersistenceMethod" Collapsed="true">
-    <Position X="9.25" Y="6.25" Width="1.5" />
+  <Class Name="HttpLoadBalancer.Models.Cookie" Collapsed="true">
+    <Position X="4.75" Y="10.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\PersistenceMethods\SessionPersistenceMethod.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAgAAAAA=</HashCode>
+      <FileName>Models\Cookie.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HttpLoadBalancer.Service.HttpMapper" Collapsed="true">
+    <Position X="4.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAJIAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAIAgAAA=</HashCode>
+      <FileName>Service\HttpMapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HttpLoadBalancer.Service.SessionService" Collapsed="true">
+    <Position X="7.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAEACAAAAAAABAAAAAAABAAAAAIAIA=</HashCode>
+      <FileName>Service\SessionService.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Interface Name="HttpLoadBalancer.Interfaces.IPersistenceMethod" Collapsed="true">
     <Position X="10" Y="5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAiAAAAAAAAAAAAIA=</HashCode>
       <FileName>Interfaces\IPersistenceMethod.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="HttpLoadBalancer.Interfaces.IHealthMonitor" Collapsed="true">
     <Position X="10.25" Y="7.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAACgAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IHealthMonitor.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="HttpLoadBalancer.Models.Status">
-    <Position X="2.5" Y="8.75" Width="1.5" />
+    <Position X="2.5" Y="10.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\Status.cs</FileName>
