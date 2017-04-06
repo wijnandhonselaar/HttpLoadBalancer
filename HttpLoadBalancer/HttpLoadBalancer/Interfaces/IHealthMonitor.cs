@@ -10,7 +10,6 @@ namespace HttpLoadBalancer.Interfaces
     public interface IHealthMonitor
     {
         void UpdateServerStatus(List<Server> servers);
-        bool IsHealthy(Server server);
-        Server PickServer(List<Server> servers);
+        Task<bool> IsHealthy(Server server);
     }
 }

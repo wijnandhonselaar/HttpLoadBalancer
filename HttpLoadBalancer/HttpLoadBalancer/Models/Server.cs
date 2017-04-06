@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Threading.Tasks;
 using HttpLoadBalancer.Service;
 
 namespace HttpLoadBalancer.Models
@@ -17,9 +18,9 @@ namespace HttpLoadBalancer.Models
 
         public Status Status { get; set; }
 
-        public Status UpdateStatus()
+        public async Task<Status> UpdateStatus()
         {
-            Status = MethodService.Monitor.IsHealthy(this) ? Status.Online : Status.Offline;
+            Status = await MethodService.Monitor.IsHealthy(this) ? Status.Online : Status.Offline;
             return Status;
         }
     }

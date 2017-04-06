@@ -26,13 +26,6 @@
       <FileName>Controller\GuiController.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HttpLoadBalancer.Service.HealthService">
-    <Position X="4.75" Y="6.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Service\HealthService.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="HttpLoadBalancer.Models.HttpMessage">
     <Position X="4.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
@@ -90,7 +83,7 @@
   <Class Name="HttpLoadBalancer.Service.HealthMonitors.ResponsetimeMonitor" Collapsed="true">
     <Position X="10.25" Y="8.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAIAAAAAAAQAAAEAAAAAAAAAAACgAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQAAAEAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
       <FileName>Service\HealthMonitors\ResponsetimeMonitor.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -147,7 +140,7 @@
   <Interface Name="HttpLoadBalancer.Interfaces.IHealthMonitor" Collapsed="true">
     <Position X="10.25" Y="7.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAACgAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IHealthMonitor.cs</FileName>
     </TypeIdentifier>
   </Interface>

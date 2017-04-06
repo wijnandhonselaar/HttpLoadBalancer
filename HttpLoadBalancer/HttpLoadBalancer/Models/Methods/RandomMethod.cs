@@ -22,7 +22,7 @@ namespace HttpLoadBalancer.Models.Methods
         public override async Task<Server> GetServer(List<Server> servers)
         {
             var index = new Random().Next(0, servers.Count);
-            while (!MethodService.Monitor.IsHealthy(servers[index]))
+            while (!await MethodService.Monitor.IsHealthy(servers[index]))
             {
                 index = new Random().Next(0, servers.Count);
             }
