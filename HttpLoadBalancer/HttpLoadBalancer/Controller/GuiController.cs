@@ -24,7 +24,6 @@ namespace HttpLoadBalancer.Controller
     {
         public Server SelectedServer;
 
-        private readonly ConcurrentBag<Method> _methods;
         private readonly ConnectionService _connectionService;
         private readonly Gui _gui;
         private TcpListener _listener;
@@ -41,7 +40,6 @@ namespace HttpLoadBalancer.Controller
         public GuiController(Gui gui)
         {
             _gui = gui;
-            _methods = new ConcurrentBag<Method>(MethodService.Methods);
             _connectionService = new ConnectionService();
             SelectedServer = _connectionService.SelectedServer;
             // initiate setting up all the data in the interface
@@ -107,8 +105,7 @@ namespace HttpLoadBalancer.Controller
         private void InitGuiData()
         {
             _gui.lstServersView.View = System.Windows.Forms.View.Details;
-            var methods = _methods.Select(x => x.Name).ToList();
-            _gui.BalanceMethod.Items.AddRange(methods.Cast<object>().ToArray());
+            _gui.BalanceMethod.Items.AddRange(MethodService.Methods.Cast<object>().ToArray());
 
             SetHealthMonitorOptions();
 

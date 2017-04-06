@@ -20,7 +20,7 @@ namespace HttpLoadBalancer.Service.HealthMonitors
             return servers[times.IndexOf(times.Min())];
         }
 
-        public async void UpdateServerStatus(List<Server> servers)
+        public void UpdateServerStatus(List<Server> servers)
         {
             foreach (var server in servers)
             {
@@ -28,9 +28,14 @@ namespace HttpLoadBalancer.Service.HealthMonitors
             }
         }
 
+        /// <summary>
+        /// Gets the time it takes between sending the request and receiving the last byte
+        /// </summary>
+        /// <param name="server"></param>
+        /// <returns></returns>
         public async Task<long> Ping(Server server)
         {
-            var message = "/ HTTP/1.1\r\n" +
+            var message = "HEAD / HTTP/1.1\r\n" +
                           $"Host: {server.Address}\r\n" +
                           "Connection: keep-alive\r\n" +
                           "Content-Length: 0\r\n\r\n";
@@ -40,7 +45,12 @@ namespace HttpLoadBalancer.Service.HealthMonitors
             var sentTime = DateTime.Now;
             serverClient.GetStream().Write(bytes, 0, bytes.Length);
 
-            return 1;
+            Array.Clear(bytes, 0, bytes.Length);
+            bytes = new byte[2048];
+            await serverClient.GetStream().ReadAsync(bytes, 0, bytes.Length);
+            var receiveTime = DateTime.Now;
+            TimeSpan span = receiveTime - sentTime;
+            return (int)span.TotalMilliseconds;
         }
 
         public static byte[] ToRequest(HttpMessage message)

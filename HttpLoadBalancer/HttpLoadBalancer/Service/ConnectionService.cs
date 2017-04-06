@@ -48,6 +48,11 @@ namespace HttpLoadBalancer.Service
             }
         }
     
+        /// <summary>
+        /// Returns false if the request is empty
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         private bool IsValidRequest(HttpMessage request)
         {
             var message = Encoding.ASCII.GetString(request.Original).Replace("\0", "");
@@ -81,7 +86,7 @@ namespace HttpLoadBalancer.Service
             }
             else // has no session, use load-balancer to pick a server
             {
-                SelectedServer = MethodService.CurrentMethod.GetServer(SessionService.Servers);
+                SelectedServer = await MethodService.CurrentMethod.GetServer(SessionService.Servers);
             }
             var serverClient = new TcpClient();
             serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
@@ -91,6 +96,10 @@ namespace HttpLoadBalancer.Service
             return serverStream;
         }
 
+        /// <summary>
+        /// Writes 503 to stream if server from cookie could not be reached
+        /// </summary>
+        /// <param name="stream"></param>
         private void ServerUnavailable(NetworkStream stream)
         {
             var head = "HTTP/1.1 503 server unavailable\r\nContent-Length: 0\r\n\r\n";
@@ -101,16 +110,7 @@ namespace HttpLoadBalancer.Service
         private async Task<HttpMessage> GetResponse (Stream stream)
         {
             byte[] buffer = new byte[BufferSize];
-            Thread.Sleep(100);
-            try
-            {
-                await stream.ReadAsync(buffer, 0, BufferSize);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw(e);
-            }
+            await stream.ReadAsync(buffer, 0, BufferSize);
             return new HttpMessage(buffer, true);
         }
 

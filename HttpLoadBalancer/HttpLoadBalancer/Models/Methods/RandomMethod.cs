@@ -15,11 +15,11 @@ namespace HttpLoadBalancer.Models.Methods
         }
 
         /// <summary>
-        /// Gets a random server
+        /// Gets a random (online) server
         /// </summary>
         /// <param name="servers"></param>
         /// <returns></returns>
-        public override Server GetServer(List<Server> servers)
+        public override async Task<Server> GetServer(List<Server> servers)
         {
             var index = new Random().Next(0, servers.Count);
             while (!MethodService.Monitor.IsHealthy(servers[index]))

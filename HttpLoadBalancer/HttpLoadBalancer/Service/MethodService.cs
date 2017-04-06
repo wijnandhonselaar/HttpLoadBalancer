@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HttpLoadBalancer.Interfaces;
 using HttpLoadBalancer.Models;
@@ -15,7 +16,7 @@ namespace HttpLoadBalancer.Service
         {
             new RandomMethod(),
             new RoundRobinMethod(),
-            //new PingMethod()
+            new PingMethod()
         };
 
         public static bool SetMethod(string methodName)
