@@ -112,10 +112,10 @@ namespace HttpLoadBalancer.Controller
 
             SetPersistenceMethods();
 
-            //foreach (var server in _connectionService.GetDefaultServers())
-            //{
-            //    AddServer(server.Address, server.Port);
-            //}
+            foreach (var server in _connectionService.GetDefaultServers())
+            {
+                AddServer(server.Address, server.Port);
+            }
 
         }
 

@@ -110,6 +110,7 @@ namespace HttpLoadBalancer.Service
 
         private async Task<HttpMessage> GetResponse (Stream stream)
         {
+            Thread.Sleep(500);
             byte[] buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);
             return new HttpMessage(buffer, true);
@@ -144,10 +145,10 @@ namespace HttpLoadBalancer.Service
         {
             return new List<Server>
             {
-                new Server("server4.tezzt.nl", 8081),
-                new Server("server4.tezzt.nl", 8082),
-                new Server("server4.tezzt.nl", 8083),
-                new Server("server4.tezzt.nl", 8084)
+                new Server("joelchrist.nl", 8081),
+                new Server("joelchrist.nl", 8082),
+                new Server("joelchrist.nl", 8083),
+                new Server("joelchrist.nl", 8084)
             };
         }
 
