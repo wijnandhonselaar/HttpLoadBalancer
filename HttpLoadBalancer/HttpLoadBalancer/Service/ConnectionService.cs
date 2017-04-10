@@ -32,10 +32,11 @@ namespace HttpLoadBalancer.Service
                         return;
                     }
                     var i = 0;
+                    // If needed, wait for the response
                     while (!responseStream.DataAvailable)
                     {
                         i++;
-                        if (i > 5) break;
+                        if (i > 10) break;
                         Thread.Sleep(100);
                     }
                     if (responseStream.CanRead && responseStream.DataAvailable)
@@ -61,6 +62,14 @@ namespace HttpLoadBalancer.Service
 
         private async Task<HttpMessage> ReceiveRequest(NetworkStream stream)
         {
+            var i = 0;
+            // If needed, wait for the response
+            while (!stream.DataAvailable)
+            {
+                i++;
+                if (i > 10) break;
+                Thread.Sleep(100);
+            }
             if (!stream.DataAvailable) return null;
             var buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);
@@ -91,6 +100,7 @@ namespace HttpLoadBalancer.Service
             var serverClient = new TcpClient();
             serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
             var serverStream = serverClient.GetStream();
+            HttpMapper.SetUrl(request, SelectedServer);
             var requestArray = HttpMapper.ToRequest(request);
             await serverStream.WriteAsync(requestArray, 0, requestArray.Length);
             return serverStream;
