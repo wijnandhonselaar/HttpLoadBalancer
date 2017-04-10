@@ -33,23 +33,26 @@ namespace HttpLoadBalancer.Service.HealthMonitors
                             $"Host: {server.Address}\r\n" +
                             "Connection: keep-alive\r\n" +
                             "Content-Length: 0\r\n\r\n";
-            var serverClient = new TcpClient(server.Address, server.Port);
-            var bytes = Encoding.ASCII.GetBytes(message);
-            try
+            using (var serverClient = new TcpClient(server.Address, server.Port))
             {
-                var sentTime = DateTime.Now;
-                serverClient.GetStream().Write(bytes, 0, bytes.Length);
+                var bytes = Encoding.ASCII.GetBytes(message);
+                try
+                {
+                    var sentTime = DateTime.Now;
+                    serverClient.GetStream().Write(bytes, 0, bytes.Length);
 
-                Array.Clear(bytes, 0, bytes.Length);
-                bytes = new byte[2048];
-                await serverClient.GetStream().ReadAsync(bytes, 0, bytes.Length);
-                var receiveTime = DateTime.Now;
-                TimeSpan span = receiveTime - sentTime;
-                return (int)span.TotalMilliseconds;
-            }
-            catch
-            {
-                return -1;
+                    Array.Clear(bytes, 0, bytes.Length);
+                    bytes = new byte[2048];
+                    await serverClient.GetStream().ReadAsync(bytes, 0, bytes.Length);
+                    var response = new HttpMessage(bytes, true);
+                    var receiveTime = DateTime.Now;
+                    TimeSpan span = receiveTime - sentTime;
+                    return (int)span.TotalMilliseconds;
+                }
+                catch
+                {
+                    return -1;
+                }
             }
         }
 
@@ -57,7 +60,14 @@ namespace HttpLoadBalancer.Service.HealthMonitors
         {
             try
             {
-                return await Ping(server) > 0;
+                var ping = await Ping(server);
+                if (ping <= 0) return false;
+                var s = SessionService.Servers.FirstOrDefault(x => x.Address == server.Address && x.Port == server.Port);
+                if (s != null)
+                {
+                    s.Status = ping > 0 ? Status.Online : Status.Offline;
+                }
+                return true;
             }
             catch
             {

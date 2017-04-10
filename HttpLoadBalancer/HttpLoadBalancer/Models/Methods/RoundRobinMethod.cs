@@ -22,7 +22,7 @@ namespace HttpLoadBalancer.Models.Methods
         /// <returns></returns>
         public override async Task<Server> GetServer(List<Server> servers)
         {
-            while (! await MethodService.Monitor.IsHealthy(servers[_index]))
+            while (servers[_index].Status != Status.Online && !await MethodService.Monitor.IsHealthy(servers[_index]))
             {
                 _index++;
                 if (_index == servers.Count) _index = 0;

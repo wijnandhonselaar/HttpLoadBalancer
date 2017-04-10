@@ -40,7 +40,7 @@ namespace HttpLoadBalancer.Controller
         public GuiController(Gui gui)
         {
             _gui = gui;
-            _connectionService = new ConnectionService();
+            _connectionService = new ConnectionService(this);
             SelectedServer = _connectionService.SelectedServer;
             // initiate setting up all the data in the interface
             InitGuiData();
@@ -48,26 +48,26 @@ namespace HttpLoadBalancer.Controller
             Task.Run(StartPollingServer);
         }
 
-        private Task StartPollingServer()
+        private async Task StartPollingServer()
         {
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
             while (true)
             {
                 foreach (var server in SessionService.Servers)
                 {
-                    server.UpdateStatus();
-                    if (server.Status == Status.Online)
-                    {
-                        SetItemColor($"{server.Address}:{server.Port}", Color.LightGreen);
-                    }
-                    else
-                    {
-                        SetItemColor($"{server.Address}:{server.Port}", Color.LightCoral);
-                    }
+                    await server.UpdateStatus();
+                    SetItemColor($"{server.Address}:{server.Port}",
+                        server.Status == Status.Online ? Color.LightGreen : Color.LightCoral);
                 }
                 // only do this every 5 seconds
                 Thread.Sleep(5000);
             }
+        }
+
+        public void ServerOffline(Server server)
+        {
+            SetItemColor($"{server.Address}:{server.Port}",
+                        server.Status == Status.Online ? Color.LightGreen : Color.LightCoral);
         }
 
         private void SetItemColor(string key, Color color)

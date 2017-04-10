@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HttpLoadBalancer.Controller;
 using HttpLoadBalancer.Models;
 using Cookie = HttpLoadBalancer.Models.Cookie;
 
@@ -17,6 +19,12 @@ namespace HttpLoadBalancer.Service
         public Server SelectedServer;
         public Dictionary<string, Cookie> Sessions = new Dictionary<string, Cookie>();
         public bool SessionsEnabled = true;
+        private readonly GuiController _guiController;
+
+        public ConnectionService(GuiController guiController)
+        {
+            _guiController = guiController;
+        }
 
         public async Task HandleRequest(TcpClient client)
         {
@@ -25,26 +33,37 @@ namespace HttpLoadBalancer.Service
                 var request = await ReceiveRequest(stream);
                 if (request != null && IsValidRequest(request))
                 {
-                    var responseStream = await SendeRequest(request);
-                    if (responseStream == null)
+                    using (var responseStream = await SendeRequest(request))
                     {
-                        ServerUnavailable(stream);
-                        return;
+                        if (responseStream == null)
+                        {
+                            ErrorMessage(stream, 503);
+                            return;
+                        }
+                        var i = 0;
+                        // If needed, wait for the response
+                        while (!responseStream.DataAvailable)
+                        {
+                            i++;
+                            if (i > 5) break;
+                            Thread.Sleep(100);
+                        }
+                        if (responseStream.CanRead && responseStream.DataAvailable)
+                        {
+                            var response = await GetResponse(responseStream);
+                            SessionService.SaveSession(response, SelectedServer);
+                            if (response != null) SendResponse(stream, response);
+                        }
+                        else
+                        {
+                            ErrorMessage(stream, 503);
+                        }
                     }
-                    var i = 0;
-                    // If needed, wait for the response
-                    while (!responseStream.DataAvailable)
-                    {
-                        i++;
-                        if (i > 10) break;
-                        Thread.Sleep(100);
-                    }
-                    if (responseStream.CanRead && responseStream.DataAvailable)
-                    {
-                        var response = await GetResponse(responseStream);
-                        SessionService.SaveSession(response, SelectedServer);
-                        if (response != null) SendResponse(stream, response);
-                    }
+                        
+                }
+                else if(request != null) 
+                {
+                    ErrorMessage(stream, 400);
                 }
             }
         }
@@ -67,7 +86,7 @@ namespace HttpLoadBalancer.Service
             while (!stream.DataAvailable)
             {
                 i++;
-                if (i > 10) break;
+                if (i > 5) break;
                 Thread.Sleep(100);
             }
             if (!stream.DataAvailable) return null;
@@ -100,8 +119,9 @@ namespace HttpLoadBalancer.Service
             var serverClient = new TcpClient();
             serverClient.Connect(SelectedServer.Address, SelectedServer.Port);
             var serverStream = serverClient.GetStream();
-            HttpMapper.SetUrl(request, SelectedServer);
+            //HttpMapper.SetUrl(request, SelectedServer);
             var requestArray = HttpMapper.ToRequest(request);
+            if (!serverStream.CanWrite) return null;
             await serverStream.WriteAsync(requestArray, 0, requestArray.Length);
             return serverStream;
         }
@@ -110,11 +130,37 @@ namespace HttpLoadBalancer.Service
         /// Writes 503 to stream if server from cookie could not be reached
         /// </summary>
         /// <param name="stream"></param>
-        private void ServerUnavailable(NetworkStream stream)
+        /// <param name="type"></param>
+        private void ErrorMessage(NetworkStream stream, int type)
         {
-            var head = "HTTP/1.1 503 server unavailable\r\nContent-Length: 0\r\n\r\n";
+            string head;
+            switch (type)
+            {
+                case 503:
+                    SetOffline();
+                    head = "HTTP/1.1 503 server unavailable\r\nContent-Length: 31\r\n\r\n<h2>503 Server unavailable</h2>";
+                    break;
+                case 400:
+                    head = "HTTP/1.1 400 BAD request\r\nContent-Length: 24\r\n\r\n<h2>400 BAD request</h2>";
+                    break;
+                default:
+                    SetOffline();
+                    head = "HTTP/1.1 503 server unavailable\r\nContent-Length: 31\r\n\r\n<h2>503 Server unavailable</h2>";
+                    break;
+            }
+                
             var errorBuffer = Encoding.ASCII.GetBytes(head);
             stream.Write(errorBuffer, 0, errorBuffer.Length);
+        }
+
+        private void SetOffline()
+        {
+            var s = SessionService.Servers.FirstOrDefault(x => x.Address == SelectedServer.Address && x.Port == SelectedServer.Port);
+            if (s != null)
+            {
+                s.Status = Status.Offline;
+                _guiController.ServerOffline(s);
+            }
         }
 
         private async Task<HttpMessage> GetResponse (Stream stream)
@@ -128,7 +174,10 @@ namespace HttpLoadBalancer.Service
         {
             var result = HttpMapper.GetHead(message);
             var resultBuffer = Encoding.ASCII.GetBytes(result);
-            stream.Write(resultBuffer, 0 , resultBuffer.Length);
+            if(message.Properties.ContainsKey("Content-Encoding") && message.Properties["Content-Encoding"] == "gzip")
+                stream.Write(message.Original, 0, message.Original.Length);
+            else
+                stream.Write(resultBuffer, 0 , resultBuffer.Length);
         }
 
         public Server AddServer(string address, int port)
