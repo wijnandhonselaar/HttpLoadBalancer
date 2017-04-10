@@ -36,9 +36,9 @@ namespace HttpLoadBalancer.Service
                     {
                         i++;
                         if (i > 5) break;
-                        Thread.Sleep(50);
+                        Thread.Sleep(100);
                     }
-                    if (responseStream.DataAvailable)
+                    if (responseStream.CanRead && responseStream.DataAvailable)
                     {
                         var response = await GetResponse(responseStream);
                         SessionService.SaveSession(response, SelectedServer);
@@ -61,7 +61,6 @@ namespace HttpLoadBalancer.Service
 
         private async Task<HttpMessage> ReceiveRequest(NetworkStream stream)
         {
-            Thread.Sleep(500);
             if (!stream.DataAvailable) return null;
             var buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);
@@ -110,7 +109,6 @@ namespace HttpLoadBalancer.Service
 
         private async Task<HttpMessage> GetResponse (Stream stream)
         {
-            Thread.Sleep(500);
             byte[] buffer = new byte[BufferSize];
             await stream.ReadAsync(buffer, 0, BufferSize);
             return new HttpMessage(buffer, true);
